@@ -54,6 +54,12 @@ export default async function HomePage() {
               {SITE.description} {SITE.goal}
             </p>
             <PrimaryCtas className="animate-rise delay-4 mt-8" />
+            <p className="animate-rise delay-4 mt-5 flex w-fit items-center gap-2.5 rounded-full border border-plum-200 bg-white/80 px-4 py-2 text-sm font-semibold text-plum-800 shadow-soft backdrop-blur">
+              <Icon name="message" className="size-4 shrink-0" />
+              <span>
+                We speak English &amp; Spanish <span className="text-plum-400">·</span> <span className="whitespace-nowrap italic">Hablamos español</span>
+              </span>
+            </p>
             <div className="animate-rise delay-5 mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
               <a href={SITE.phones.primary.tel} className="group flex min-h-12 items-center gap-3">
                 <span className="grid size-12 place-items-center rounded-full bg-plum-100 text-plum-700 transition group-hover:bg-plum-700 group-hover:text-white">
@@ -374,6 +380,7 @@ export default async function HomePage() {
                 "Flexible one-time, weekly, biweekly & monthly scheduling",
                 "Free time estimates from your photos",
                 "Easy to reach — call or text either of our two lines",
+                "We speak English & Spanish — hablamos español",
               ]}
             />
             <div className="mt-9 flex flex-wrap gap-3">
@@ -482,7 +489,19 @@ export default async function HomePage() {
               View all FAQs <Icon name="arrowRight" className="size-5" />
             </Link>
           </div>
-          <FaqList items={ALL_FAQS.filter((_, i) => [0, 1, 2, 6, 8, 11].includes(i))} />
+          <FaqList
+            items={[
+              "How does your pricing work?",
+              "Is there a minimum?",
+              "How much does deep cleaning cost?",
+              "How do I know how many hours I need?",
+              "Is my appointment confirmed when I submit a booking request?",
+              "Do you speak Spanish? · ¿Hablan español?",
+              "What areas do you serve?",
+            ]
+              .map((q) => ALL_FAQS.find((f) => f.q === q))
+              .filter((f): f is (typeof ALL_FAQS)[number] => !!f)}
+          />
         </div>
       </section>
 

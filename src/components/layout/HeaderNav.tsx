@@ -246,6 +246,7 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
                 </div>
               ))}
             </div>
+            <p className="text-center text-sm font-semibold text-plum-800">We speak English &amp; Spanish · Hablamos español</p>
             <p className="flex items-center justify-center gap-2 pt-1 text-center font-script text-2xl text-plum-700">
               <Sparkle className="size-3" /> {SITE.slogan} <Sparkle className="size-3" />
             </p>

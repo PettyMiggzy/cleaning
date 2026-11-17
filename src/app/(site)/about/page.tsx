@@ -16,7 +16,7 @@ const VALUES = [
   { icon: "heart" as const, title: "Care in every detail", text: "We treat every home and business like it's our own — thoughtful, respectful and thorough." },
   { icon: "dollar" as const, title: "Transparent pricing", text: "Simple hourly crew rates shown up front, with free estimates from your photos." },
   { icon: "calendar" as const, title: "Flexible scheduling", text: "One-time, weekly, biweekly or monthly — we work around your life." },
-  { icon: "message" as const, title: "Easy to reach", text: "Two business lines that accept both calls and text messages." },
+  { icon: "message" as const, title: "English & Spanish", text: "Call or text either of our two lines — we speak English and Spanish. ¡Hablamos español!" },
 ];
 
 export default function AboutPage() {

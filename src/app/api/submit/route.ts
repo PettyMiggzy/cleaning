@@ -150,6 +150,7 @@ export async function POST(req: Request) {
   }
 
   const fields: [string, string][] = [];
+  const spanish = str(fd, "language", 10) === "Español";
   const services = await getAllServices();
   const serviceId = str(fd, "service", 120);
   const service = services.find((s) => s.id === serviceId);
@@ -190,6 +191,7 @@ export async function POST(req: Request) {
         ["Square Footage", str(fd, "sqft", 8)],
         ["Special Instructions", str(fd, "instructions", 3000)],
         ["Preferred Contact", str(fd, "contactPref", 10)],
+        ["Preferred Language", spanish ? "Español (Spanish)" : "English"],
       );
     }
   } else if (type === "estimate") {
@@ -209,11 +211,16 @@ export async function POST(req: Request) {
       ["Square Footage", str(fd, "sqft", 8)],
       ["Preferred Date", /^\d{4}-\d{2}-\d{2}$/.test(str(fd, "date")) ? str(fd, "date") : ""],
       ["Special Instructions", str(fd, "instructions", 3000)],
+      ["Preferred Language", spanish ? "Español (Spanish)" : "English"],
     );
   } else {
     const message = str(fd, "message", 4000);
     if (message.length < 5) errors.message = "Please enter a message.";
-    fields.push(["Topic", str(fd, "topic", 60)], ["Message", message]);
+    fields.push(
+      ["Topic", str(fd, "topic", 60)],
+      ["Message", message],
+      ["Preferred Language", spanish ? "Español (Spanish)" : "English"],
+    );
   }
 
   // Photos
@@ -288,7 +295,7 @@ export async function POST(req: Request) {
   const emailed = await sendMail({
     to: notifyAddress(),
     replyTo: email || undefined,
-    subject: `New ${label}: ${name}${city ? ` — ${city}` : ""}`,
+    subject: `New ${label}: ${name}${city ? ` — ${city}` : ""}${spanish ? " (Español)" : ""}`,
     html: emailLayout(
       `New ${label}`,
       `${escapeHtml(name)} submitted a ${label.toLowerCase()} on your website.${
@@ -316,21 +323,35 @@ export async function POST(req: Request) {
     );
   }
 
-  // Friendly confirmation to the customer (only when email is configured).
+  // Friendly confirmation to the customer (only when email is configured) — in Spanish when requested.
   if (email && type !== "contact") {
+    const first = name.split(" ")[0];
+    const booking = type === "booking";
+    const copy = spanish
+      ? {
+          subject: `Recibimos su ${booking ? "solicitud de reservación" : "solicitud de cotización con fotos"} — ${SITE.name}`,
+          title: `¡Gracias, ${first}!`,
+          intro: booking
+            ? "Recibimos su solicitud de reservación. <strong>Todavía no es una cita confirmada</strong> — le llamaremos o le enviaremos un mensaje de texto pronto para confirmar la fecha, la hora de llegada, el equipo y el precio estimado."
+            : "Recibimos sus fotos. Nuestro equipo las revisará, le recomendará el equipo de limpieza adecuado, calculará cuánto tiempo tomará el trabajo y le enviará un precio estimado antes de programar.",
+          footer: `¿Preguntas? Llame o envíe un mensaje de texto al <a href="${SITE.phones.primary.tel}">${SITE.phones.primary.display}</a> o al <a href="${SITE.phones.secondary.tel}">${SITE.phones.secondary.display}</a>. ¡Hablamos español!<br/><em>Los tiempos y precios son estimados hasta ser revisados y aprobados.</em>`,
+          text: `¡Gracias! Recibimos su solicitud y nos comunicaremos con usted pronto. Llame o envíe un texto al ${SITE.phones.primary.display}.`,
+        }
+      : {
+          subject: `We received your ${booking ? "booking request" : "photo estimate request"} — ${SITE.name}`,
+          title: `Thank you, ${first}!`,
+          intro: booking
+            ? "We received your booking request. <strong>This is not yet a confirmed appointment</strong> — we'll call or text you shortly to confirm your date, arrival time, crew and estimated price."
+            : "We received your pictures. Our team will review them, recommend the right cleaning crew, estimate how long the job will take and send you an estimated price before scheduling.",
+          footer: `Questions? Call or text <a href="${SITE.phones.primary.tel}">${SITE.phones.primary.display}</a> or <a href="${SITE.phones.secondary.tel}">${SITE.phones.secondary.display}</a>. We speak English &amp; Spanish.<br/><em>Times and prices are estimates until reviewed and approved.</em>`,
+          text: `Thank you! We received your request and will contact you shortly. Call or text ${SITE.phones.primary.display}.`,
+        };
     await sendMail({
       to: email,
       replyTo: SITE.email,
-      subject: `We received your ${type === "booking" ? "booking request" : "photo estimate request"} — ${SITE.name}`,
-      html: emailLayout(
-        `Thank you, ${name.split(" ")[0]}!`,
-        type === "booking"
-          ? "We received your booking request. <strong>This is not yet a confirmed appointment</strong> — we'll call or text you shortly to confirm your date, arrival time, crew and estimated price."
-          : "We received your pictures. Our team will review them, recommend the right cleaning crew, estimate how long the job will take and send you an estimated price before scheduling.",
-        submission.fields,
-        `Questions? Call or text <a href="${SITE.phones.primary.tel}">${SITE.phones.primary.display}</a> or <a href="${SITE.phones.secondary.tel}">${SITE.phones.secondary.display}</a>.<br/><em>Times and prices are estimates until reviewed and approved.</em>`,
-      ),
-      text: `Thank you! We received your request and will contact you shortly. Call or text ${SITE.phones.primary.display}.`,
+      subject: copy.subject,
+      html: emailLayout(copy.title, copy.intro, submission.fields, copy.footer),
+      text: copy.text,
     });
   }
 

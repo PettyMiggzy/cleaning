@@ -48,6 +48,10 @@ export const FAQ_GROUPS: { title: string; items: Faq[] }[] = [
         a: "Not yet. Online bookings are requests. We'll contact you by call or text to confirm the date, arrival time, crew and estimated price. Your appointment is confirmed once we approve it together.",
       },
       {
+        q: "Do you speak Spanish? · ¿Hablan español?",
+        a: "Yes! Our team speaks English and Spanish — ¡hablamos español! Call or text us in whichever language you prefer, and choose your preferred language on any of our forms.",
+      },
+      {
         q: "Can I call or text you?",
         a: `Yes! Both of our numbers accept calls and text messages: ${SITE.phones.primary.display} and ${SITE.phones.secondary.display}.`,
       },

@@ -56,6 +56,27 @@ export function FutureDateInput(props: React.InputHTMLAttributes<HTMLInputElemen
   return <input ref={ref} type="date" className="field" {...props} />;
 }
 
+/** English / Español preference so the team replies in the customer's language. */
+export function LanguagePicker({ className = "" }: { className?: string }) {
+  return (
+    <fieldset className={className}>
+      <legend className="field-label">
+        Preferred language <span className="font-normal text-muted">· Idioma preferido</span>
+      </legend>
+      <div className="flex flex-wrap gap-2">
+        {["English", "Español"].map((m, i) => (
+          <label key={m} className="cursor-pointer">
+            <input type="radio" name="language" value={m} defaultChecked={i === 0} className="peer sr-only" />
+            <span className="flex min-h-10 items-center rounded-full border-2 border-silver-200 px-5 text-sm font-semibold text-ink transition-all peer-checked:border-plum-600 peer-checked:bg-plum-50 peer-checked:text-plum-800 peer-focus-visible:ring-2 peer-focus-visible:ring-plum-400">
+              {m}
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 /** Invisible anti-spam fields: a honeypot and a render timestamp. */
 export function SpamGuard() {
   const tRef = useRef<HTMLInputElement>(null);

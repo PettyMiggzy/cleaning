@@ -16,7 +16,7 @@ import {
 } from "@/lib/pricing";
 import { SITE } from "@/lib/site";
 import { Icon } from "../Icon";
-import { ARRIVAL_WINDOWS, Field, FutureDateInput, PROPERTY_TYPES, SpamGuard, SubmitBar, SuccessPanel, useSubmit } from "./FormKit";
+import { ARRIVAL_WINDOWS, Field, FutureDateInput, LanguagePicker, PROPERTY_TYPES, SpamGuard, SubmitBar, SuccessPanel, useSubmit } from "./FormKit";
 import { PhotoUploader, type PickedPhoto } from "./PhotoUploader";
 
 export type ServiceOption = { id: string; name: string; pricing: PricingMode };
@@ -296,6 +296,7 @@ export function BookingForm({ groups }: { groups: ServiceGroup[] }) {
                 ))}
               </div>
             </fieldset>
+            <LanguagePicker className="sm:col-span-2" />
           </div>
         </Step>
       </div>

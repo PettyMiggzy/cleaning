@@ -47,7 +47,9 @@ export async function Header() {
         <div className="container-x flex h-10 items-center justify-center gap-6 md:justify-between">
           <p className="hidden items-center gap-2 md:flex">
             <Icon name="mapPin" className="size-3.5 text-plum-300" />
-            Proudly serving Spring, Klein, The Woodlands &amp; nearby communities
+            Proudly serving Spring, Klein, The Woodlands &amp; nearby
+            <span className="text-plum-400">·</span>
+            <span className="font-semibold text-white">We speak English &amp; Spanish</span>
           </p>
           <div className="flex h-full items-center gap-2 font-semibold tracking-wide sm:gap-4">
             <a href={SITE.phones.primary.tel} className="flex h-full items-center gap-1.5 px-1 hover:text-white">

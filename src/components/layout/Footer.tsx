@@ -36,6 +36,9 @@ export async function Footer() {
           <div>
             <Logo light size={64} />
             <p className="mt-5 font-script text-3xl text-white">{SITE.slogan}</p>
+            <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-plum-100">
+              <Icon name="message" className="size-3.5" /> We speak English &amp; Spanish · Hablamos español
+            </p>
             <p className="mt-3 max-w-sm text-[0.95rem] leading-relaxed text-plum-200">
               Residential, commercial, deep cleaning and move-out cleaning in {SITE.city}, {SITE.state} and surrounding
               communities.

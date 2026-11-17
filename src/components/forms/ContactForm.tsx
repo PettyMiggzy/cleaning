@@ -1,6 +1,6 @@
 "use client";
 
-import { Field, SpamGuard, SubmitBar, SuccessPanel, useSubmit } from "./FormKit";
+import { Field, LanguagePicker, SpamGuard, SubmitBar, SuccessPanel, useSubmit } from "./FormKit";
 
 const TOPICS = ["General question", "Pricing question", "Recurring cleaning", "Commercial cleaning", "Existing appointment", "Other"];
 
@@ -50,6 +50,7 @@ export function ContactForm() {
         <Field label="Message" name="message" required error={errors.message} className="sm:col-span-2">
           <textarea id="message" name="message" className="field" maxLength={4000} aria-invalid={!!errors.message} />
         </Field>
+        <LanguagePicker className="sm:col-span-2" />
       </div>
       <p className="mt-4 text-sm text-muted">Please include a phone number or email so we can reply.</p>
       <div className="mt-5">

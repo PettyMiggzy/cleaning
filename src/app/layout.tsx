@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: `${SITE.name} | House Cleaning & Maid Services in Spring, TX`,
     template: `%s | ${SITE.name}`,
   },
-  description: `${SITE.description} Transparent hourly pricing, flexible scheduling and free photo estimates. Call or text ${SITE.phones.primary.display}.`,
+  description: `${SITE.description} Transparent hourly pricing, flexible scheduling and free photo estimates. We speak English & Spanish. Call or text ${SITE.phones.primary.display}.`,
   applicationName: SITE.name,
   keywords: [
     "house cleaning Spring TX",
@@ -25,6 +25,8 @@ export const metadata: Metadata = {
     "commercial cleaning",
     "cleaning service The Woodlands",
     "house cleaners Klein TX",
+    "limpieza de casas Spring TX",
+    "servicio de limpieza en español",
   ],
   openGraph: {
     type: "website",

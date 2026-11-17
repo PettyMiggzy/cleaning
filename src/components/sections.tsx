@@ -240,7 +240,7 @@ export function TrustStrip() {
     { icon: "dollar" as const, title: "Transparent Pricing", text: "Hourly crew rates, shown up front" },
     { icon: "calendar" as const, title: "Flexible Scheduling", text: "One-time or recurring service" },
     { icon: "camera" as const, title: "Free Photo Estimates", text: "Send pictures, get a time estimate" },
-    { icon: "message" as const, title: "Call or Text", text: "Two lines that accept calls & texts" },
+    { icon: "message" as const, title: "English & Spanish", text: "Hablamos español — call or text" },
   ];
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

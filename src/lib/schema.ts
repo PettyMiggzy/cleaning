@@ -16,6 +16,7 @@ export function localBusinessSchema(extra: { sameAs?: string[]; services?: strin
     telephone: SITE.phones.primary.e164,
     email: SITE.email,
     priceRange: "$$",
+    knowsLanguage: ["en", "es"],
     currenciesAccepted: "USD",
     address: {
       "@type": "PostalAddress",
@@ -31,12 +32,14 @@ export function localBusinessSchema(extra: { sameAs?: string[]; services?: strin
         telephone: SITE.phones.primary.e164,
         contactType: "customer service",
         areaServed: "US",
+        availableLanguage: ["English", "Spanish"],
       },
       {
         "@type": "ContactPoint",
         telephone: SITE.phones.secondary.e164,
         contactType: "customer service",
         areaServed: "US",
+        availableLanguage: ["English", "Spanish"],
       },
     ],
     ...(extra.sameAs?.length ? { sameAs: extra.sameAs } : {}),

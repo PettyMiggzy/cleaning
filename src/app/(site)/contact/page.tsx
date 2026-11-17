@@ -71,6 +71,16 @@ export default async function ContactPage() {
                   <p className="text-sm text-muted">Serving {AREAS.map((a) => a.name).join(", ")}</p>
                 </div>
               </div>
+              <div className="mt-5 flex items-center gap-4 border-t border-silver-100 pt-5">
+                <span className="grid size-12 place-items-center rounded-2xl bg-plum-100 text-plum-700">
+                  <Icon name="message" />
+                </span>
+                <div>
+                  <p className="text-xs font-bold tracking-[0.16em] text-plum-700 uppercase">Languages</p>
+                  <p className="font-semibold text-ink">English &amp; Spanish</p>
+                  <p className="text-sm text-muted">¡Hablamos español! Call or text in the language you prefer.</p>
+                </div>
+              </div>
             </div>
             <div className="silver-ring card bg-white p-6 shadow-soft">
               <p className="text-xs font-bold tracking-[0.16em] text-plum-700 uppercase">Follow Us</p>

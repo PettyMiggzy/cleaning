@@ -23,6 +23,8 @@ export const SITE = {
     "Our goal is to provide dependable cleaning services with transparent pricing, flexible scheduling, and easy estimates.",
   url: resolveSiteUrl(),
   email: "emiliscleaningco@gmail.com",
+  /** The team speaks both languages — hablamos español. */
+  languages: ["English", "Spanish"],
   city: "Spring",
   state: "TX",
   stateName: "Texas",

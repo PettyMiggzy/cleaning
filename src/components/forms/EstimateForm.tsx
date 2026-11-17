@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AREA_NAMES } from "@/lib/areas";
 import { SITE } from "@/lib/site";
 import type { ServiceGroup } from "./BookingForm";
-import { Field, FutureDateInput, PROPERTY_TYPES, SpamGuard, SubmitBar, SuccessPanel, useSubmit } from "./FormKit";
+import { Field, FutureDateInput, LanguagePicker, PROPERTY_TYPES, SpamGuard, SubmitBar, SuccessPanel, useSubmit } from "./FormKit";
 import { PhotoUploader, type PickedPhoto } from "./PhotoUploader";
 
 export function EstimateForm({ groups, compact = false }: { groups: ServiceGroup[]; compact?: boolean }) {
@@ -125,6 +125,7 @@ export function EstimateForm({ groups, compact = false }: { groups: ServiceGroup
         >
           <textarea id="instructions" name="instructions" className="field" maxLength={3000} />
         </Field>
+        <LanguagePicker className="sm:col-span-6" />
       </div>
 
       <div className="mt-7 space-y-4">
