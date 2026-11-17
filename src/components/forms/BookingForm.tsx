@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AREA_NAMES } from "@/lib/areas";
 import {
   CREWS,
@@ -51,6 +51,17 @@ export function BookingForm({ groups }: { groups: ServiceGroup[] }) {
   const [frequency, setFrequency] = useState("One-time");
   const [photos, setPhotos] = useState<PickedPhoto[]>([]);
   const { state, submit, reset, errors } = useSubmit("booking");
+  const asideRef = useRef<HTMLElement>(null);
+  const [summaryVisible, setSummaryVisible] = useState(false);
+
+  // On phones the price summary sits below the form, so show a compact sticky estimate until it scrolls into view.
+  useEffect(() => {
+    const el = asideRef.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([entry]) => setSummaryVisible(entry.isIntersecting), { threshold: 0.05 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [state.status]);
 
 
   const selected = all.find((s) => s.id === service);
@@ -289,8 +300,36 @@ export function BookingForm({ groups }: { groups: ServiceGroup[] }) {
         </Step>
       </div>
 
+      {/* Compact sticky estimate (phones only) */}
+      <div
+        className={`fixed inset-x-3 z-30 transition-all duration-300 lg:hidden ${
+          summaryVisible ? "pointer-events-none translate-y-4 opacity-0" : "opacity-100"
+        }`}
+        style={{ bottom: "calc(5.25rem + env(safe-area-inset-bottom))" }}
+        aria-hidden={summaryVisible}
+      >
+        <button
+          type="button"
+          tabIndex={summaryVisible ? -1 : 0}
+          onClick={() => asideRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          className="flex w-full items-center justify-between gap-3 rounded-2xl bg-plum-950/95 px-4 py-3 text-left text-white shadow-lift backdrop-blur"
+        >
+          <span className="min-w-0">
+            <span className="block truncate text-[0.62rem] font-bold tracking-[0.14em] text-plum-300 uppercase">
+              {mode === "custom" ? "Hourly ref." : "Est. price"} · {crew} cleaners · {hours} hrs
+            </span>
+            <span className="block font-serif text-xl font-semibold whitespace-nowrap">
+              {est.low === est.high ? formatUSD(est.low) : `${formatUSD(est.low)}–${formatUSD(est.high)}`}
+            </span>
+          </span>
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/10 px-3 py-2 text-xs font-bold">
+            Review <Icon name="chevronDown" className="size-4" />
+          </span>
+        </button>
+      </div>
+
       {/* Summary */}
-      <aside className="lg:sticky lg:top-32">
+      <aside ref={asideRef} className="scroll-mt-28 lg:sticky lg:top-32">
         <div className="overflow-hidden rounded-[2rem] shadow-lift">
           <div className="bg-plum-luxe p-6 text-white sm:p-7">
             <p className="text-xs font-bold tracking-[0.2em] text-plum-200 uppercase">

@@ -106,7 +106,8 @@ export function ServiceAreaMap({ active }: { active?: string }) {
                   x={x + pos.dx}
                   y={y + pos.dy}
                   textAnchor={pos.anchor}
-                  style={{ font: `${isActive ? 700 : 600} ${isActive ? 25 : 22}px var(--font-sans)`, paintOrder: "stroke" }}
+                  className={isActive ? "map-label-active" : "map-label"}
+                  style={{ fontFamily: "var(--font-sans)", fontWeight: isActive ? 700 : 600, paintOrder: "stroke" }}
                   stroke="#fff"
                   strokeWidth="6"
                   strokeLinejoin="round"

@@ -11,13 +11,21 @@ const globalForPg = globalThis as unknown as { __eccPool?: Pool; __eccSchema?: P
 
 function getPool(url: string) {
   if (!globalForPg.__eccPool) {
-    const local = /@(localhost|127\.0\.0\.1|db|postgres)[:/]/.test(url);
-    globalForPg.__eccPool = new Pool({
-      connectionString: url,
+    // TLS is configured explicitly below, so drop libpq-style flags pg would otherwise reinterpret.
+    const u = new URL(url);
+    u.searchParams.delete("sslmode");
+    u.searchParams.delete("channel_binding");
+    const local = /^(localhost|127\.0\.0\.1|db|postgres)$/.test(u.hostname);
+    const pool = new Pool({
+      connectionString: u.toString(),
       max: 5,
       idleTimeoutMillis: 30_000,
-      ssl: local || /sslmode=disable/.test(url) ? undefined : { rejectUnauthorized: false },
+      connectionTimeoutMillis: 15_000,
+      ssl: local || /sslmode=disable/.test(url) ? undefined : { rejectUnauthorized: process.env.PGSSL_REJECT_UNAUTHORIZED !== "false" },
     });
+    // Serverless Postgres (e.g. Neon) closes idle connections; never let that crash the server.
+    pool.on("error", (err) => console.error("[postgres] idle client error", err.message));
+    globalForPg.__eccPool = pool;
   }
   return globalForPg.__eccPool;
 }
@@ -46,7 +54,14 @@ create table if not exists ecc_files (
 
 export function createPostgresDriver(url: string): StoreDriver {
   const pool = getPool(url);
-  const ready = () => (globalForPg.__eccSchema ??= pool.query(SCHEMA).then(() => undefined));
+  const ready = () =>
+    (globalForPg.__eccSchema ??= pool.query(SCHEMA).then(
+      () => undefined,
+      (err) => {
+        globalForPg.__eccSchema = undefined;
+        throw err;
+      },
+    ));
 
   return {
     kind: "postgres",

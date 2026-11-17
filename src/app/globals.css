@@ -47,6 +47,10 @@
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 6.5rem;
   }
+  html,
+  body {
+    overflow-x: clip;
+  }
   body {
     background: #fff;
     color: var(--color-ink-soft);
@@ -294,6 +298,7 @@
     align-items: center;
     gap: 0.4rem;
     padding: 0.4rem 0.9rem;
+    min-height: 2.25rem;
     border-radius: 999px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -387,6 +392,24 @@
   .prose-ecc ul {
     list-style: disc;
     padding-left: 1.4rem;
+  }
+  a.chip {
+    min-height: 2.5rem;
+    padding-inline: 1rem;
+  }
+  .map-label {
+    font-size: 22px;
+  }
+  .map-label-active {
+    font-size: 25px;
+  }
+  @media (max-width: 640px) {
+    .map-label {
+      font-size: 30px;
+    }
+    .map-label-active {
+      font-size: 33px;
+    }
   }
   .prose-ecc a {
     color: var(--color-plum-700);

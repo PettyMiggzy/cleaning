@@ -49,15 +49,15 @@ export async function Header() {
             <Icon name="mapPin" className="size-3.5 text-plum-300" />
             Proudly serving Spring, Klein, The Woodlands &amp; nearby communities
           </p>
-          <div className="flex items-center gap-4 font-semibold tracking-wide">
-            <a href={SITE.phones.primary.tel} className="flex items-center gap-1.5 hover:text-white">
+          <div className="flex h-full items-center gap-2 font-semibold tracking-wide sm:gap-4">
+            <a href={SITE.phones.primary.tel} className="flex h-full items-center gap-1.5 px-1 hover:text-white">
               <Icon name="phone" className="size-3.5 text-plum-300" />
               <span className="hidden sm:inline">Call or Text</span> {SITE.phones.primary.display}
             </a>
             <span className="text-plum-400" aria-hidden>
               |
             </span>
-            <a href={SITE.phones.secondary.tel} className="flex items-center gap-1.5 hover:text-white">
+            <a href={SITE.phones.secondary.tel} className="flex h-full items-center gap-1.5 px-1 hover:text-white">
               <span className="hidden sm:inline">Secondary</span> {SITE.phones.secondary.display}
             </a>
           </div>

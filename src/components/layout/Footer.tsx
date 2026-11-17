@@ -46,26 +46,26 @@ export async function Footer() {
                   <span className="w-24 text-xs font-bold tracking-[0.15em] text-plum-300 uppercase">
                     {i === 0 ? "Primary" : "Secondary"}
                   </span>
-                  <a href={p.tel} className="font-semibold text-white hover:text-plum-200">
+                  <a href={p.tel} className="inline-flex min-h-10 items-center font-semibold text-white hover:text-plum-200">
                     {p.display}
                   </a>
                   <span className="flex gap-1.5">
                     <a
                       href={p.tel}
-                      className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold hover:bg-white/10"
+                      className="inline-flex min-h-10 items-center rounded-full border border-white/20 px-4 text-xs font-semibold hover:bg-white/10"
                     >
                       Call
                     </a>
                     <a
                       href={p.sms}
-                      className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold hover:bg-white/10"
+                      className="inline-flex min-h-10 items-center rounded-full border border-white/20 px-4 text-xs font-semibold hover:bg-white/10"
                     >
                       Text
                     </a>
                   </span>
                 </div>
               ))}
-              <a href={`mailto:${SITE.email}`} className="flex items-center gap-2 pt-1 text-sm text-plum-200 hover:text-white">
+              <a href={`mailto:${SITE.email}`} className="flex min-h-10 items-center gap-2 text-sm text-plum-200 hover:text-white">
                 <Icon name="mail" className="size-4" /> {SITE.email}
               </a>
             </div>
@@ -135,7 +135,7 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
   return (
     <div>
       <h2 className="font-sans text-xs font-bold tracking-[0.2em] text-white uppercase">{title}</h2>
-      <ul className="mt-5 space-y-2.5 text-[0.95rem]">{children}</ul>
+      <ul className="mt-3 text-[0.95rem]">{children}</ul>
     </div>
   );
 }
@@ -143,7 +143,7 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} className="text-plum-200 transition-colors hover:text-white">
+      <Link href={href} className="inline-flex min-h-10 items-center text-plum-200 transition-colors hover:text-white">
         {children}
       </Link>
     </li>

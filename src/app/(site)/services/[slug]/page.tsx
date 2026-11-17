@@ -152,7 +152,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
                       <li key={s.id}>
                         <Link
                           href={`/book?service=${s.id}`}
-                          className="inline-flex rounded-full border border-silver-200 px-3.5 py-1.5 text-sm font-semibold text-ink-soft transition hover:border-plum-300 hover:bg-plum-50 hover:text-plum-800"
+                          className="inline-flex min-h-10 items-center rounded-full border border-silver-200 px-4 text-sm font-semibold text-ink-soft transition hover:border-plum-300 hover:bg-plum-50 hover:text-plum-800"
                         >
                           {s.name}
                         </Link>
@@ -160,7 +160,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
                     ))}
                   </ul>
                   <div className="px-6 pb-6">
-                    <Link href={`/services#${r.category.id}`} className="inline-flex items-center gap-2 font-bold text-plum-700">
+                    <Link href={`/services#${r.category.id}`} className="inline-flex min-h-10 items-center gap-2 font-bold text-plum-700">
                       View all {r.category.shortName.toLowerCase()} services <Icon name="arrowRight" className="size-4" />
                     </Link>
                   </div>
@@ -178,7 +178,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
             <div className="mt-8">
               <FaqList items={page.faqs} />
             </div>
-            <Link href="/faq" className="mt-6 inline-flex items-center gap-2 font-bold text-plum-700">
+            <Link href="/faq" className="mt-6 inline-flex min-h-10 items-center gap-2 font-bold text-plum-700">
               More questions & answers <Icon name="arrowRight" className="size-4" />
             </Link>
           </div>

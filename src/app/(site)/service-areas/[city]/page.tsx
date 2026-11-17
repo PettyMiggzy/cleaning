@@ -113,7 +113,7 @@ export default async function CityPage({ params }: PageProps<"/service-areas/[ci
                       <li key={s.id}>
                         <Link
                           href={`/book?service=${s.id}`}
-                          className="inline-flex rounded-full border border-silver-200 px-3 py-1.5 text-sm text-ink-soft transition hover:border-plum-300 hover:bg-plum-50 hover:text-plum-800"
+                          className="inline-flex min-h-10 items-center rounded-full border border-silver-200 px-4 text-sm text-ink-soft transition hover:border-plum-300 hover:bg-plum-50 hover:text-plum-800"
                         >
                           {s.name}
                         </Link>
@@ -121,7 +121,7 @@ export default async function CityPage({ params }: PageProps<"/service-areas/[ci
                     ))}
                     {g.services.length > 10 && (
                       <li>
-                        <Link href={`/services#${g.category.id}`} className="inline-flex rounded-full bg-plum-100 px-3 py-1.5 text-sm font-semibold text-plum-800">
+                        <Link href={`/services#${g.category.id}`} className="inline-flex min-h-10 items-center rounded-full bg-plum-100 px-4 text-sm font-semibold text-plum-800">
                           +{g.services.length - 10} more
                         </Link>
                       </li>

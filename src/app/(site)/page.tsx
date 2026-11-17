@@ -55,7 +55,7 @@ export default async function HomePage() {
             </p>
             <PrimaryCtas className="animate-rise delay-4 mt-8" />
             <div className="animate-rise delay-5 mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <a href={SITE.phones.primary.tel} className="group flex items-center gap-3">
+              <a href={SITE.phones.primary.tel} className="group flex min-h-12 items-center gap-3">
                 <span className="grid size-12 place-items-center rounded-full bg-plum-100 text-plum-700 transition group-hover:bg-plum-700 group-hover:text-white">
                   <Icon name="phone" />
                 </span>
@@ -67,11 +67,11 @@ export default async function HomePage() {
               <span className="hidden h-10 w-px bg-silver-200 sm:block" />
               <span className="leading-tight">
                 <span className="block text-xs font-bold tracking-[0.16em] text-muted uppercase">Secondary</span>
-                <span className="flex items-center gap-3">
-                  <a href={SITE.phones.secondary.tel} className="font-serif text-xl font-semibold text-ink hover:text-plum-700">
+                <span className="flex items-center gap-2">
+                  <a href={SITE.phones.secondary.tel} className="inline-flex min-h-11 items-center font-serif text-xl font-semibold text-ink hover:text-plum-700">
                     {SITE.phones.secondary.display}
                   </a>
-                  <a href={SITE.phones.secondary.sms} className="text-sm font-semibold text-plum-700 underline underline-offset-4">
+                  <a href={SITE.phones.secondary.sms} className="inline-flex min-h-10 items-center rounded-full bg-plum-100 px-4 text-sm font-bold text-plum-800">
                     Text
                   </a>
                 </span>

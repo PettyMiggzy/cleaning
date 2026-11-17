@@ -80,7 +80,7 @@ export function PhoneLines({ dark = false, compact = false }: { dark?: boolean; 
           </p>
           <a
             href={p.tel}
-            className={`mt-1 block font-serif text-2xl font-semibold tracking-tight md:text-[1.7rem] ${
+            className={`mt-1 flex min-h-11 items-center font-serif text-2xl font-semibold tracking-tight md:text-[1.7rem] ${
               dark ? "text-white" : "text-ink"
             }`}
           >

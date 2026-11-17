@@ -137,7 +137,7 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
 
       {/* Mobile drawer */}
       <div
-        className={`fixed inset-0 z-[60] xl:hidden ${open ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[60] overflow-hidden transition-[visibility] duration-500 xl:hidden ${open ? "visible" : "pointer-events-none invisible"}`}
         aria-hidden={!open}
         inert={!open}
       >
