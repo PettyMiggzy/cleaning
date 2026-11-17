@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "@/i18n/client";
 import { Icon } from "./Icon";
 
 export type ExplorerGroup = {
@@ -15,13 +16,14 @@ export type ExplorerGroup = {
   services: { id: string; name: string; description: string }[];
 };
 
-const PRICING_LABEL: Record<string, string> = {
-  hourly: "Hourly crew rate",
-  deep: "Hourly + 25–30%",
-  custom: "Custom estimate",
+const PRICING_LABEL: Record<string, [string, string]> = {
+  hourly: ["Hourly crew rate", "Tarifa por hora del equipo"],
+  deep: ["Hourly + 25–30%", "Por hora + 25–30%"],
+  custom: ["Custom estimate", "Estimado personalizado"],
 };
 
 export function ServicesExplorer({ groups }: { groups: ExplorerGroup[] }) {
+  const { t, lang } = useI18n();
   const [active, setActive] = useState(groups[0]?.id ?? "");
   const [query, setQuery] = useState("");
 
@@ -58,22 +60,24 @@ export function ServicesExplorer({ groups }: { groups: ExplorerGroup[] }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search services — e.g. oven, baseboards, Airbnb…"
+          placeholder={t("Search services — e.g. oven, baseboards, Airbnb…", "Buscar servicios — ej. horno, zoclos, Airbnb…")}
           className="field !rounded-full pl-13 shadow-soft"
-          aria-label="Search cleaning services"
+          aria-label={t("Search cleaning services", "Buscar servicios de limpieza")}
         />
       </div>
 
       {results ? (
         <div className="mt-10">
           <p className="mb-5 text-center text-muted">
-            {results.length} service{results.length === 1 ? "" : "s"} found for “{query}”
+            {lang === "es"
+              ? `${results.length} ${results.length === 1 ? "servicio encontrado" : "servicios encontrados"} para “${query}”`
+              : `${results.length} service${results.length === 1 ? "" : "s"} found for “${query}”`}
           </p>
           <ServiceGrid services={results} />
         </div>
       ) : (
         <>
-          <div role="tablist" aria-label="Service categories" className="mt-10 flex gap-2 overflow-x-auto pb-3 lg:flex-wrap lg:justify-center">
+          <div role="tablist" aria-label={t("Service categories", "Categorías de servicios")} className="mt-10 flex gap-2 overflow-x-auto pb-3 lg:flex-wrap lg:justify-center">
             {groups.map((g) => (
               <button
                 key={g.id}
@@ -108,10 +112,10 @@ export function ServicesExplorer({ groups }: { groups: ExplorerGroup[] }) {
                 <p className="mt-3 text-ink-soft">{group.description}</p>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <span className="chip">
-                    <Icon name="dollar" className="size-4" /> {PRICING_LABEL[group.pricing]}
+                    <Icon name="dollar" className="size-4" /> {t(PRICING_LABEL[group.pricing][0], PRICING_LABEL[group.pricing][1])}
                   </span>
                   <span className="chip">
-                    <Icon name="layers" className="size-4" /> {group.services.length} services
+                    <Icon name="layers" className="size-4" /> {group.services.length} {t("services", "servicios")}
                   </span>
                 </div>
               </div>
@@ -125,6 +129,7 @@ export function ServicesExplorer({ groups }: { groups: ExplorerGroup[] }) {
 }
 
 function ServiceGrid({ services }: { services: { id: string; name: string; description: string; group?: string }[] }) {
+  const { t, href } = useI18n();
   return (
     <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {services.map((s) => (
@@ -136,11 +141,11 @@ function ServiceGrid({ services }: { services: { id: string; name: string; descr
           </h3>
           <p className="mt-2 flex-1 text-[0.97rem] leading-relaxed text-ink-soft">{s.description}</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Link href={`/book?service=${s.id}`} className="btn btn-primary btn-sm">
-              Get a Quote
+            <Link href={href(`/book?service=${s.id}`)} className="btn btn-primary btn-sm">
+              {t("Get a Quote", "Pedir cotización")}
             </Link>
-            <Link href="/photo-estimate" className="btn btn-outline btn-sm">
-              <Icon name="camera" className="size-4" /> Photo Estimate
+            <Link href={href("/photo-estimate")} className="btn btn-outline btn-sm">
+              <Icon name="camera" className="size-4" /> {t("Photo Estimate", "Estimado con fotos")}
             </Link>
           </div>
         </li>

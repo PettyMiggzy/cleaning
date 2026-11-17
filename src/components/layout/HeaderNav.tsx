@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { SITE } from "@/lib/site";
+import { useI18n } from "@/i18n/client";
+import { stripLang } from "@/i18n/config";
+import { COPY, SITE } from "@/lib/site";
 import { Icon, Sparkle } from "../Icon";
+import { LanguageSwitch } from "./LanguageSwitch";
 import { Logo } from "./Logo";
 
 export type NavLink = { href: string; label: string; note?: string; featured?: boolean };
@@ -24,6 +27,7 @@ function HeaderNavWithPath({ groups }: { groups: NavGroup[] }) {
 }
 
 function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: string }) {
+  const { lang, t, href } = useI18n();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -49,7 +53,8 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const isActive = (href: string) => !!pathname && (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  const barePath = stripLang(pathname);
+  const isActive = (h: string) => !!pathname && (h === "/" ? barePath === "/" : barePath.startsWith(h));
 
   return (
     <header
@@ -57,16 +62,16 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
         scrolled ? "border-silver-200/80 bg-white/90 shadow-soft backdrop-blur-xl" : "border-transparent bg-white"
       }`}
     >
-      <div className="container-x flex h-[4.75rem] items-center justify-between gap-4 lg:h-[5.5rem]">
+      <div className="container-x flex h-[4.75rem] items-center justify-between gap-2 sm:gap-4 lg:h-[5.5rem]">
         <Logo />
 
-        <nav aria-label="Main" className="hidden items-center gap-1 xl:flex">
+        <nav aria-label={t("Main", "Principal")} className="hidden items-center gap-1 xl:flex">
           {groups.map((g) =>
             g.links ? (
               <div key={g.label} className="group relative">
                 <Link
-                  href={g.href}
-                  className={`flex items-center gap-1 rounded-full px-3.5 py-2 text-[0.9rem] font-semibold transition-colors hover:text-plum-700 ${
+                  href={href(g.href)}
+                  className={`flex items-center gap-1 rounded-full px-3.5 py-2 text-[0.9rem] font-semibold whitespace-nowrap transition-colors hover:text-plum-700 ${
                     isActive(g.href) ? "text-plum-700" : "text-ink"
                   }`}
                   aria-haspopup="true"
@@ -79,7 +84,7 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
                     {g.links.map((l) => (
                       <Link
                         key={l.href + l.label}
-                        href={l.href}
+                        href={href(l.href)}
                         className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-plum-50 ${
                           l.featured ? "mt-1 border-t border-silver-100 bg-plum-50/60" : ""
                         }`}
@@ -99,8 +104,8 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
             ) : (
               <Link
                 key={g.label}
-                href={g.href}
-                className={`rounded-full px-3.5 py-2 text-[0.9rem] font-semibold transition-colors hover:text-plum-700 ${
+                href={href(g.href)}
+                className={`rounded-full px-3.5 py-2 text-[0.9rem] font-semibold whitespace-nowrap transition-colors hover:text-plum-700 ${
                   isActive(g.href) ? "text-plum-700" : "text-ink"
                 }`}
               >
@@ -110,22 +115,25 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
           )}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <a
             href={SITE.phones.primary.tel}
             className="silver-ring card hidden size-12 place-items-center rounded-full text-plum-700 transition hover:shadow-soft sm:grid xl:hidden 2xl:grid"
-            aria-label={`Call ${SITE.phones.primary.display}`}
+            aria-label={`${t("Call", "Llamar al")} ${SITE.phones.primary.display}`}
           >
             <Icon name="phone" />
           </a>
-          <Link href="/book" className="btn btn-primary hidden md:inline-flex">
+          <Link href={href("/book")} className="btn btn-primary hidden whitespace-nowrap md:inline-flex">
             <Icon name="calendar" className="size-5" />
-            Book Your Cleaning
+            {t("Book Your Cleaning", "Reserve su limpieza")}
           </Link>
+          <div className="md:hidden">
+            <LanguageSwitch variant="pill" />
+          </div>
           <button
             type="button"
-            className="silver-ring card grid size-12 place-items-center rounded-full text-ink xl:hidden"
-            aria-label="Open menu"
+            className="silver-ring card grid size-11 place-items-center rounded-full text-ink sm:size-12 xl:hidden"
+            aria-label={t("Open menu", "Abrir menú")}
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => setOpen(true)}
@@ -151,7 +159,7 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
           id="mobile-menu"
           role="dialog"
           aria-modal="true"
-          aria-label="Menu"
+          aria-label={t("Menu", "Menú")}
           className={`absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-y-auto bg-white shadow-2xl transition-transform duration-500 ease-[var(--ease-lux)] ${
             open ? "translate-x-0" : "translate-x-full"
           }`}
@@ -161,16 +169,21 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
             <button
               type="button"
               className="silver-ring card grid size-11 place-items-center rounded-full"
-              aria-label="Close menu"
+              aria-label={t("Close menu", "Cerrar menú")}
               onClick={() => setOpen(false)}
             >
               <Icon name="x" className="size-5" />
             </button>
           </div>
 
-          <nav aria-label="Mobile" className="flex-1 px-3 py-4">
-            <Link href="/" className="block rounded-2xl px-4 py-3 text-lg font-semibold text-ink hover:bg-plum-50">
-              Home
+          <div className="border-b border-silver-100 px-5 py-4">
+            <p className="mb-2 text-[0.65rem] font-bold tracking-[0.18em] text-plum-700 uppercase">{t("Language", "Idioma")}</p>
+            <LanguageSwitch variant="drawer" />
+          </div>
+
+          <nav aria-label={t("Mobile", "Móvil")} className="flex-1 px-3 py-4">
+            <Link href={href("/")} className="block rounded-2xl px-4 py-3 text-lg font-semibold text-ink hover:bg-plum-50">
+              {t("Home", "Inicio")}
             </Link>
             {groups.map((g) =>
               g.links ? (
@@ -197,7 +210,7 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
                         {g.links.map((l) => (
                           <Link
                             key={l.href + l.label}
-                            href={l.href}
+                            href={href(l.href)}
                             className={`block rounded-xl px-3 py-2.5 text-[1rem] hover:bg-plum-50 ${
                               l.featured ? "font-semibold text-plum-700" : "text-ink-soft"
                             }`}
@@ -212,7 +225,7 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
               ) : (
                 <Link
                   key={g.label}
-                  href={g.href}
+                  href={href(g.href)}
                   className="block rounded-2xl px-4 py-3 text-lg font-semibold text-ink hover:bg-plum-50"
                 >
                   {g.label}
@@ -222,33 +235,35 @@ function HeaderNavInner({ groups, pathname }: { groups: NavGroup[]; pathname: st
           </nav>
 
           <div className="space-y-3 border-t border-silver-100 bg-plum-50/60 p-5">
-            <Link href="/book" className="btn btn-primary w-full">
-              <Icon name="calendar" className="size-5" /> Book Your Cleaning
+            <Link href={href("/book")} className="btn btn-primary w-full">
+              <Icon name="calendar" className="size-5" /> {t("Book Your Cleaning", "Reserve su limpieza")}
             </Link>
-            <Link href="/photo-estimate" className="btn btn-outline w-full">
-              <Icon name="camera" className="size-5" /> Send Pictures for a Free Estimate
+            <Link href={href("/photo-estimate")} className="btn btn-outline w-full">
+              <Icon name="camera" className="size-5" /> {t("Send Pictures for a Free Estimate", "Envíe fotos para un estimado gratis")}
             </Link>
             <div className="grid grid-cols-2 gap-2 pt-1">
               {[SITE.phones.primary, SITE.phones.secondary].map((p, i) => (
                 <div key={p.e164} className="rounded-2xl bg-white p-3 text-center shadow-soft">
                   <p className="text-[0.65rem] font-bold tracking-[0.15em] text-plum-700 uppercase">
-                    {i === 0 ? "Primary" : "Secondary"}
+                    {i === 0 ? t("Primary", "Principal") : t("Secondary", "Secundario")}
                   </p>
                   <p className="font-semibold text-ink">{p.display}</p>
                   <div className="mt-2 flex justify-center gap-2">
-                    <a href={p.tel} className="grid size-10 place-items-center rounded-full bg-plum-700 text-white" aria-label={`Call ${p.display}`}>
+                    <a href={p.tel} className="grid size-10 place-items-center rounded-full bg-plum-700 text-white" aria-label={`${t("Call", "Llamar al")} ${p.display}`}>
                       <Icon name="phone" className="size-4" />
                     </a>
-                    <a href={p.sms} className="grid size-10 place-items-center rounded-full bg-plum-100 text-plum-800" aria-label={`Text ${p.display}`}>
+                    <a href={p.sms} className="grid size-10 place-items-center rounded-full bg-plum-100 text-plum-800" aria-label={`${t("Text", "Enviar texto al")} ${p.display}`}>
                       <Icon name="message" className="size-4" />
                     </a>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-center text-sm font-semibold text-plum-800">We speak English &amp; Spanish · Hablamos español</p>
+            <p className="text-center text-sm font-semibold text-plum-800">
+              {t("We speak English & Spanish · Hablamos español", "Hablamos español e inglés · We speak English & Spanish")}
+            </p>
             <p className="flex items-center justify-center gap-2 pt-1 text-center font-script text-2xl text-plum-700">
-              <Sparkle className="size-3" /> {SITE.slogan} <Sparkle className="size-3" />
+              <Sparkle className="size-3" /> {COPY[lang].slogan} <Sparkle className="size-3" />
             </p>
           </div>
         </div>

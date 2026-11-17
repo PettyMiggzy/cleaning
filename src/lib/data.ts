@@ -68,6 +68,7 @@ export function resolveServices({ overrides, custom }: ServiceSettings): Resolve
       ...s,
       categories: [...s.categories],
       description: o.description?.trim() || s.description,
+      descriptionEs: o.descriptionEs?.trim() || s.descriptionEs,
       enabled: o.enabled ?? s.defaultEnabled,
     };
   });
@@ -75,6 +76,8 @@ export function resolveServices({ overrides, custom }: ServiceSettings): Resolve
     id: c.id,
     name: c.name,
     description: c.description,
+    nameEs: c.nameEs?.trim() || c.name,
+    descriptionEs: c.descriptionEs?.trim() || c.description,
     categories: [c.category],
     pricing: CATEGORIES.find((cat) => cat.id === c.category)?.pricing ?? "custom",
     defaultEnabled: c.enabled,

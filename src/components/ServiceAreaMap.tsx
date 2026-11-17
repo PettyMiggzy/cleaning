@@ -1,4 +1,5 @@
 import { AREAS } from "@/lib/areas";
+import { getI18n } from "@/i18n/server";
 
 // Simple equirectangular projection tuned for the north Houston area.
 const LNG_MIN = -95.76;
@@ -33,14 +34,16 @@ const LABEL_POS: Record<string, { dx: number; dy: number; anchor: "start" | "end
   "conroe-tx": { dx: 16, dy: 6, anchor: "start" },
 };
 
-export function ServiceAreaMap({ active }: { active?: string }) {
+export async function ServiceAreaMap({ active }: { active?: string }) {
+  const { t, href } = await getI18n();
   const [sx, sy] = px(30.0799, -95.4172);
   return (
     <figure className="silver-ring card relative overflow-hidden bg-white shadow-lift" style={{ borderRadius: "2rem" }}>
       <svg viewBox="0 0 800 640" role="img" aria-labelledby="map-title map-desc" className="h-auto w-full">
-        <title id="map-title">Emili&apos;s Cleaning Co. service area map</title>
+        <title id="map-title">{t("Emili's Cleaning Co. service area map", "Mapa de las zonas de servicio de Emili's Cleaning Co.")}</title>
         <desc id="map-desc">
-          Map of the north Houston area showing the communities we serve: {AREAS.map((a) => a.label).join(", ")}.
+          {t("Map of the north Houston area showing the communities we serve: ", "Mapa del norte del área de Houston con las comunidades que atendemos: ")}
+          {AREAS.map((a) => a.label).join(", ")}.
         </desc>
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -62,11 +65,11 @@ export function ServiceAreaMap({ active }: { active?: string }) {
         {/* Lakes */}
         <path d="M95 18c30-10 70 8 76 34s-18 46-44 44-58-14-62-38 0-32 30-40Z" fill="#e6dcf5" opacity=".8" />
         <text x="122" y="64" textAnchor="middle" className="fill-plum-400" style={{ font: "italic 600 17px var(--font-serif)" }}>
-          Lake Conroe
+          {t("Lake Conroe", "Lago Conroe")}
         </text>
         <path d="M748 470c18 6 34 34 30 62s-22 58-40 56-20-40-16-70 8-54 26-48Z" fill="#e6dcf5" opacity=".8" />
         <text x="760" y="610" textAnchor="end" className="fill-plum-400" style={{ font: "italic 600 17px var(--font-serif)" }}>
-          Lake Houston
+          {t("Lake Houston", "Lago Houston")}
         </text>
         {/* Service zone glow */}
         <ellipse cx={sx - 20} cy={sy - 20} rx="440" ry="330" fill="url(#zone)" />
@@ -92,7 +95,7 @@ export function ServiceAreaMap({ active }: { active?: string }) {
           const pos = LABEL_POS[a.slug];
           const isActive = active ? active === a.slug : a.homeBase;
           return (
-            <a key={a.slug} href={`/service-areas/${a.slug}`} aria-label={`${a.label} cleaning services`}>
+            <a key={a.slug} href={href(`/service-areas/${a.slug}`)} aria-label={t(`${a.label} cleaning services`, `Servicios de limpieza en ${a.label}`)}>
               <g className="cursor-pointer [&:hover_circle.dot]:fill-plum-500">
                 {isActive && (
                   <circle cx={x} cy={y} r="14" fill="#9a5cd3" opacity=".35">
@@ -124,7 +127,7 @@ export function ServiceAreaMap({ active }: { active?: string }) {
                     strokeWidth="4"
                     fill="#6a2fa6"
                   >
-                    HOME BASE
+                    {t("HOME BASE", "BASE PRINCIPAL")}
                   </text>
                 )}
               </g>
@@ -142,9 +145,9 @@ export function ServiceAreaMap({ active }: { active?: string }) {
       </svg>
       <figcaption className="flex flex-wrap items-center justify-between gap-2 border-t border-silver-100 bg-plum-50/60 px-5 py-3 text-xs text-muted">
         <span className="flex items-center gap-2">
-          <span className="size-2.5 rounded-full bg-plum-600" /> Communities we serve — tap a city for details
+          <span className="size-2.5 rounded-full bg-plum-600" /> {t("Communities we serve — tap a city for details", "Comunidades que atendemos — toque una ciudad para ver detalles")}
         </span>
-        <span>Map is illustrative, not to scale</span>
+        <span>{t("Map is illustrative, not to scale", "Mapa ilustrativo, no está a escala")}</span>
       </figcaption>
     </figure>
   );

@@ -2,8 +2,11 @@ import Link from "next/link";
 import { AREAS } from "@/lib/areas";
 import { getEnabledServices, getSettings } from "@/lib/data";
 import { SERVICE_PAGES } from "@/lib/service-pages";
-import { SITE } from "@/lib/site";
+import { COPY, SITE } from "@/lib/site";
+import { servicePage } from "@/i18n/content";
+import { getI18n } from "@/i18n/server";
 import { Icon, Sparkle, type IconName } from "../Icon";
+import { LanguageSwitch } from "./LanguageSwitch";
 import { Logo } from "./Logo";
 import { Year } from "./Year";
 
@@ -17,9 +20,9 @@ const SOCIAL: { key: "facebook" | "instagram" | "tiktok" | "google" | "yelp" | "
 ];
 
 export async function Footer() {
-  const [settings, enabledList] = await Promise.all([getSettings(), getEnabledServices()]);
+  const [{ lang, t, href }, settings, enabledList] = await Promise.all([getI18n(), getSettings(), getEnabledServices()]);
   const enabled = new Set(enabledList.map((s) => s.id));
-  const servicePages = SERVICE_PAGES.filter((p) => enabled.has(p.serviceId));
+  const servicePages = SERVICE_PAGES.filter((p) => enabled.has(p.serviceId)).map((p) => servicePage(lang, p));
   const socials = SOCIAL.filter((s) => settings.social[s.key]);
 
   return (
@@ -35,19 +38,25 @@ export async function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <Logo light size={64} />
-            <p className="mt-5 font-script text-3xl text-white">{SITE.slogan}</p>
+            <p className="mt-5 font-script text-3xl text-white">{COPY[lang].slogan}</p>
             <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1.5 text-xs font-semibold text-plum-100">
-              <Icon name="message" className="size-3.5" /> We speak English &amp; Spanish · Hablamos español
+              <Icon name="message" className="size-3.5" />{" "}
+              {t("We speak English & Spanish · Hablamos español", "Hablamos español e inglés · We speak English & Spanish")}
             </p>
+            <div className="mt-4">
+              <LanguageSwitch variant="footer" />
+            </div>
             <p className="mt-3 max-w-sm text-[0.95rem] leading-relaxed text-plum-200">
-              Residential, commercial, deep cleaning and move-out cleaning in {SITE.city}, {SITE.state} and surrounding
-              communities.
+              {t(
+                `Residential, commercial, deep cleaning and move-out cleaning in ${SITE.city}, ${SITE.state} and surrounding communities.`,
+                `Limpieza residencial, comercial, profunda y de mudanza en ${SITE.city}, ${SITE.state} y comunidades cercanas.`,
+              )}
             </p>
             <div className="mt-6 space-y-3">
               {[SITE.phones.primary, SITE.phones.secondary].map((p, i) => (
                 <div key={p.e164} className="flex flex-wrap items-center gap-3">
                   <span className="w-24 text-xs font-bold tracking-[0.15em] text-plum-300 uppercase">
-                    {i === 0 ? "Primary" : "Secondary"}
+                    {i === 0 ? t("Primary", "Principal") : t("Secondary", "Secundario")}
                   </span>
                   <a href={p.tel} className="inline-flex min-h-10 items-center font-semibold text-white hover:text-plum-200">
                     {p.display}
@@ -57,13 +66,13 @@ export async function Footer() {
                       href={p.tel}
                       className="inline-flex min-h-10 items-center rounded-full border border-white/20 px-4 text-xs font-semibold hover:bg-white/10"
                     >
-                      Call
+                      {t("Call", "Llamar")}
                     </a>
                     <a
                       href={p.sms}
                       className="inline-flex min-h-10 items-center rounded-full border border-white/20 px-4 text-xs font-semibold hover:bg-white/10"
                     >
-                      Text
+                      {t("Text", "Texto")}
                     </a>
                   </span>
                 </div>
@@ -90,43 +99,44 @@ export async function Footer() {
             )}
           </div>
 
-          <FooterCol title="Cleaning Services">
+          <FooterCol title={t("Cleaning Services", "Servicios de limpieza")}>
             {servicePages.map((p) => (
-              <FooterLink key={p.slug} href={`/services/${p.slug}`}>
+              <FooterLink key={p.slug} href={href(`/services/${p.slug}`)}>
                 {p.navLabel}
               </FooterLink>
             ))}
-            <FooterLink href="/services">All Cleaning Services</FooterLink>
-            <FooterLink href="/pricing">Pricing</FooterLink>
+            <FooterLink href={href("/services")}>{t("All Cleaning Services", "Todos los servicios")}</FooterLink>
+            <FooterLink href={href("/pricing")}>{t("Pricing", "Precios")}</FooterLink>
           </FooterCol>
 
-          <FooterCol title="Service Areas">
+          <FooterCol title={t("Service Areas", "Zonas de servicio")}>
             {AREAS.map((a) => (
-              <FooterLink key={a.slug} href={`/service-areas/${a.slug}`}>
+              <FooterLink key={a.slug} href={href(`/service-areas/${a.slug}`)}>
                 {a.label}
               </FooterLink>
             ))}
           </FooterCol>
 
-          <FooterCol title="Company">
-            <FooterLink href="/about">About Us</FooterLink>
-            <FooterLink href="/photo-estimate">Send Pictures for an Estimate</FooterLink>
-            <FooterLink href="/book">Book Your Cleaning</FooterLink>
-            <FooterLink href="/gallery">Before &amp; After Gallery</FooterLink>
-            <FooterLink href="/reviews">Customer Reviews</FooterLink>
-            <FooterLink href="/faq">FAQ</FooterLink>
-            <FooterLink href="/contact">Contact Us</FooterLink>
-            <FooterLink href="/privacy-policy">Privacy Policy</FooterLink>
+          <FooterCol title={t("Company", "Empresa")}>
+            <FooterLink href={href("/about")}>{t("About Us", "Sobre nosotros")}</FooterLink>
+            <FooterLink href={href("/photo-estimate")}>{t("Send Pictures for an Estimate", "Enviar fotos para un estimado")}</FooterLink>
+            <FooterLink href={href("/book")}>{t("Book Your Cleaning", "Reserve su limpieza")}</FooterLink>
+            <FooterLink href={href("/gallery")}>{t("Before & After Gallery", "Galería de antes y después")}</FooterLink>
+            <FooterLink href={href("/reviews")}>{t("Customer Reviews", "Reseñas de clientes")}</FooterLink>
+            <FooterLink href={href("/faq")}>{t("FAQ", "Preguntas frecuentes")}</FooterLink>
+            <FooterLink href={href("/contact")}>{t("Contact Us", "Contáctenos")}</FooterLink>
+            <FooterLink href={href("/privacy-policy")}>{t("Privacy Policy", "Política de privacidad")}</FooterLink>
           </FooterCol>
         </div>
 
         <div className="divider-silver mt-14 opacity-30" />
         <div className="mt-6 flex flex-col items-center justify-between gap-3 text-xs text-plum-300 md:flex-row">
           <p>
-            © <Year /> {SITE.name} · {SITE.city}, {SITE.stateName}. All rights reserved.
+            © <Year /> {SITE.name} · {SITE.city}, {SITE.stateName}. {t("All rights reserved.", "Todos los derechos reservados.")}
           </p>
           <p className="flex items-center gap-2">
-            <Sparkle className="size-3 text-plum-400" /> Prices and times shown are estimates until reviewed and approved.
+            <Sparkle className="size-3 text-plum-400" />{" "}
+            {t("Prices and times shown are estimates until reviewed and approved.", "Los precios y tiempos mostrados son estimados hasta que se revisen y aprueben.")}
           </p>
         </div>
       </div>

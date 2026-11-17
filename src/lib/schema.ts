@@ -1,15 +1,16 @@
 import { AREAS } from "./areas";
-import { absoluteUrl, SITE } from "./site";
+import { absoluteUrl, COPY, SITE } from "./site";
 
 /** schema.org LocalBusiness — consistent NAP info for Google. */
-export function localBusinessSchema(extra: { sameAs?: string[]; services?: string[] } = {}) {
+export function localBusinessSchema(extra: { sameAs?: string[]; services?: string[]; lang?: "en" | "es" } = {}) {
+  const lang = extra.lang ?? "en";
   return {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
     "@id": absoluteUrl("/#business"),
     name: SITE.name,
-    slogan: SITE.slogan,
-    description: `${SITE.description} ${SITE.goal}`,
+    slogan: COPY[lang].slogan,
+    description: `${COPY[lang].description} ${COPY[lang].goal}`,
     url: SITE.url,
     logo: absoluteUrl(SITE.logo),
     image: [absoluteUrl("/images/house-cleaning-team-spring-tx.webp"), absoluteUrl(SITE.logo)],
@@ -47,7 +48,7 @@ export function localBusinessSchema(extra: { sameAs?: string[]; services?: strin
       ? {
           hasOfferCatalog: {
             "@type": "OfferCatalog",
-            name: "Cleaning Services",
+            name: lang === "es" ? "Servicios de limpieza" : "Cleaning Services",
             itemListElement: extra.services.map((name) => ({
               "@type": "Offer",
               itemOffered: { "@type": "Service", name },
@@ -83,7 +84,7 @@ export function faqSchema(faqs: { q: string; a: string }[]) {
   };
 }
 
-export function serviceSchema(opts: { name: string; description: string; path: string; areas?: string[] }) {
+export function serviceSchema(opts: { name: string; description: string; path: string; areas?: string[]; lang?: "en" | "es" }) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -91,6 +92,7 @@ export function serviceSchema(opts: { name: string; description: string; path: s
     serviceType: opts.name,
     description: opts.description,
     url: absoluteUrl(opts.path),
+    inLanguage: opts.lang === "es" ? "es-US" : "en-US",
     provider: { "@id": absoluteUrl("/#business") },
     areaServed: (opts.areas ?? AREAS.map((a) => a.label)).map((name) => ({ "@type": "City", name })),
   };

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useI18n } from "@/i18n/client";
 import { SITE } from "@/lib/site";
 import { Icon, Sparkle } from "../Icon";
 import type { PickedPhoto } from "./PhotoUploader";
@@ -25,10 +26,11 @@ export function Field({
   children: ReactNode;
   className?: string;
 }) {
+  const { t } = useI18n();
   return (
     <div className={className}>
       <label htmlFor={name} className="field-label">
-        {label} {required ? <span className="text-plum-600">*</span> : <span className="font-normal text-muted">(optional)</span>}
+        {label} {required ? <span className="text-plum-600">*</span> : <span className="font-normal text-muted">{t("(optional)", "(opcional)")}</span>}
       </label>
       {children}
       {hint && !error && <p className="mt-1.5 text-sm text-muted">{hint}</p>}
@@ -58,15 +60,23 @@ export function FutureDateInput(props: React.InputHTMLAttributes<HTMLInputElemen
 
 /** English / Español preference so the team replies in the customer's language. */
 export function LanguagePicker({ className = "" }: { className?: string }) {
+  const { lang, t } = useI18n();
   return (
     <fieldset className={className}>
       <legend className="field-label">
-        Preferred language <span className="font-normal text-muted">· Idioma preferido</span>
+        {t("Preferred language", "Idioma preferido")}
+        {lang === "en" && <span className="font-normal text-muted"> · Idioma preferido</span>}
       </legend>
       <div className="flex flex-wrap gap-2">
-        {["English", "Español"].map((m, i) => (
+        {["English", "Español"].map((m) => (
           <label key={m} className="cursor-pointer">
-            <input type="radio" name="language" value={m} defaultChecked={i === 0} className="peer sr-only" />
+            <input
+              type="radio"
+              name="language"
+              value={m}
+              defaultChecked={m === (lang === "es" ? "Español" : "English")}
+              className="peer sr-only"
+            />
             <span className="flex min-h-10 items-center rounded-full border-2 border-silver-200 px-5 text-sm font-semibold text-ink transition-all peer-checked:border-plum-600 peer-checked:bg-plum-50 peer-checked:text-plum-800 peer-focus-visible:ring-2 peer-focus-visible:ring-plum-400">
               {m}
             </span>
@@ -101,12 +111,14 @@ type State =
   | { status: "error"; message: string; errors?: FieldErrors };
 
 export function useSubmit(type: string) {
+  const { lang, t } = useI18n();
   const [state, setState] = useState<State>({ status: "idle" });
 
   function submit(form: HTMLFormElement, photos: PickedPhoto[] = [], extra: Record<string, string> = {}) {
     const fd = new FormData(form);
     fd.delete("photos");
     fd.set("type", type);
+    fd.set("lang", lang);
     for (const [k, v] of Object.entries(extra)) fd.set(k, v);
     photos.forEach((p) => fd.append("photos", p.file, p.file.name));
 
@@ -128,8 +140,14 @@ export function useSubmit(type: string) {
           message:
             body.message ||
             (xhr.status === 413
-              ? "Your photos are too large to upload. Please remove a few, or text them to us."
-              : "Something went wrong. Please try again, or call or text us."),
+              ? t(
+                  "Your photos are too large to upload. Please remove a few, or text them to us.",
+                  "Sus fotos son demasiado grandes para subirlas. Quite algunas o envíenoslas por texto.",
+                )
+              : t(
+                  "Something went wrong. Please try again, or call or text us.",
+                  "Algo salió mal. Inténtelo de nuevo, o llámenos o envíenos un texto.",
+                )),
           errors: body.errors,
         });
         if (body.errors) {
@@ -142,7 +160,10 @@ export function useSubmit(type: string) {
     xhr.onerror = () =>
       setState({
         status: "error",
-        message: "We couldn't reach the server. Check your connection and try again, or call or text us.",
+        message: t(
+          "We couldn't reach the server. Check your connection and try again, or call or text us.",
+          "No pudimos conectar con el servidor. Revise su conexión e inténtelo de nuevo, o llámenos o envíenos un texto.",
+        ),
       });
     xhr.send(fd);
   }
@@ -164,6 +185,7 @@ export function SubmitBar({
   label: string;
   icon?: "send" | "calendar" | "camera";
 }) {
+  const { t } = useI18n();
   const busy = state.status === "submitting";
   return (
     <div className="space-y-3">
@@ -177,7 +199,7 @@ export function SubmitBar({
         {busy ? (
           <>
             <span className="size-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-            {state.progress > 0 && state.progress < 100 ? `Uploading… ${state.progress}%` : "Sending…"}
+            {state.progress > 0 && state.progress < 100 ? `${t("Uploading…", "Subiendo…")} ${state.progress}%` : t("Sending…", "Enviando…")}
           </>
         ) : (
           <>
@@ -199,7 +221,7 @@ export function SuccessPanel({
   message,
   id,
   onReset,
-  resetLabel = "Send another request",
+  resetLabel,
 }: {
   title: string;
   message: ReactNode;
@@ -207,6 +229,7 @@ export function SuccessPanel({
   onReset?: () => void;
   resetLabel?: string;
 }) {
+  const { t, href } = useI18n();
   return (
     <div className="animate-rise relative overflow-hidden rounded-[2rem] bg-plum-luxe p-7 text-center text-white sm:p-10" role="status">
       <Sparkle className="animate-twinkle absolute top-6 left-8 size-5 text-plum-300" />
@@ -216,27 +239,34 @@ export function SuccessPanel({
       </span>
       <h3 className="mt-5 font-serif text-3xl text-white">{title}</h3>
       <div className="mx-auto mt-3 max-w-lg text-plum-100">{message}</div>
-      {id && <p className="mt-4 text-xs tracking-[0.18em] text-plum-300 uppercase">Reference #{id.slice(-8).toUpperCase()}</p>}
+      {id && <p className="mt-4 text-xs tracking-[0.18em] text-plum-300 uppercase">{t("Reference", "Referencia")} #{id.slice(-8).toUpperCase()}</p>}
       <div className="mt-7 flex flex-wrap justify-center gap-3">
         <a href={SITE.phones.primary.tel} className="btn btn-light">
-          <Icon name="phone" className="size-5" /> Call {SITE.phones.primary.display}
+          <Icon name="phone" className="size-5" /> {t("Call", "Llamar al")} {SITE.phones.primary.display}
         </a>
         <a href={SITE.phones.primary.sms} className="btn btn-ghost-light">
-          <Icon name="message" className="size-5" /> Text Us
+          <Icon name="message" className="size-5" /> {t("Text Us", "Envíenos un texto")}
         </a>
       </div>
       <div className="mt-6 flex flex-wrap justify-center gap-5 text-sm">
         {onReset && (
           <button type="button" onClick={onReset} className="font-semibold text-plum-200 underline underline-offset-4">
-            {resetLabel}
+            {resetLabel ?? t("Send another request", "Enviar otra solicitud")}
           </button>
         )}
-        <Link href="/" className="font-semibold text-plum-200 underline underline-offset-4">
-          Back to home
+        <Link href={href("/")} className="font-semibold text-plum-200 underline underline-offset-4">
+          {t("Back to home", "Volver al inicio")}
         </Link>
       </div>
     </div>
   );
 }
 
-export { PROPERTY_TYPES_SERVER as PROPERTY_TYPES, ARRIVAL_WINDOWS_SERVER as ARRIVAL_WINDOWS } from "@/lib/form-options";
+export {
+  ARRIVAL_OPTIONS,
+  CONTACT_PREF_OPTIONS,
+  CONTACT_TOPIC_OPTIONS,
+  FREQUENCY_OPTIONS,
+  OTHER_CITY,
+  PROPERTY_TYPE_OPTIONS,
+} from "@/lib/form-options";

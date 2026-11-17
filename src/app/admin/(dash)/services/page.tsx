@@ -11,6 +11,7 @@ export default async function AdminServices() {
   const doc = await store().readDoc<ServiceSettings>("services").catch(() => null);
   const services = resolveServices({ overrides: doc?.overrides ?? {}, custom: doc?.custom ?? [] });
   const defaults = Object.fromEntries(CATALOG.map((c) => [c.id, c.description]));
+  const defaultsEs = Object.fromEntries(CATALOG.map((c) => [c.id, c.descriptionEs]));
 
   return (
     <>
@@ -24,7 +25,9 @@ export default async function AdminServices() {
           id: s.id,
           name: s.name,
           description: s.description,
+          descriptionEs: s.descriptionEs,
           defaultDescription: defaults[s.id] ?? "",
+          defaultDescriptionEs: defaultsEs[s.id] ?? "",
           categories: s.categories,
           enabled: s.enabled,
           custom: !!s.custom,
@@ -56,9 +59,21 @@ export default async function AdminServices() {
           </div>
           <div className="md:col-span-2">
             <label className="field-label" htmlFor="cs-desc">
-              Short description
+              Short description (English)
             </label>
             <textarea id="cs-desc" name="description" maxLength={600} className="field !min-h-24" />
+          </div>
+          <div>
+            <label className="field-label" htmlFor="cs-name-es">
+              Service name in Spanish <span className="font-normal text-muted">(optional)</span>
+            </label>
+            <input id="cs-name-es" name="nameEs" maxLength={100} className="field" placeholder="Nombre del servicio" />
+          </div>
+          <div>
+            <label className="field-label" htmlFor="cs-desc-es">
+              Description in Spanish <span className="font-normal text-muted">(optional)</span>
+            </label>
+            <textarea id="cs-desc-es" name="descriptionEs" maxLength={600} className="field !min-h-14" />
           </div>
           <div>
             <button className="btn btn-primary" type="submit">

@@ -1,4 +1,5 @@
 import type { PricingMode } from "./pricing";
+import { SERVICE_ES } from "./services-catalog.es";
 
 /**
  * Master list of every cleaning service the business offers (or may offer).
@@ -290,6 +291,9 @@ export type Service = {
   id: string;
   name: string;
   description: string;
+  /** Spanish name/description (falls back to English). */
+  nameEs: string;
+  descriptionEs: string;
   /** Primary category first. */
   categories: CategoryId[];
   pricing: PricingMode;
@@ -323,6 +327,8 @@ function buildCatalog(): Service[] {
         id,
         name,
         description,
+        nameEs: SERVICE_ES[id]?.name ?? name,
+        descriptionEs: SERVICE_ES[id]?.description ?? description,
         categories: [cat.id],
         pricing: /deep/i.test(name) ? "deep" : cat.pricing,
         defaultEnabled: !cat.optional,

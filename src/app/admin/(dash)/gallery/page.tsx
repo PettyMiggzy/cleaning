@@ -31,6 +31,12 @@ export default async function AdminGallery() {
                 <label className="field-label">Title</label>
                 <input name="title" defaultValue={g.title} className="field" />
               </div>
+              <div className="sm:col-span-2">
+                <label className="field-label">
+                  Title in Spanish <span className="font-normal text-muted">(optional)</span>
+                </label>
+                <input name="titleEs" defaultValue={g.titleEs ?? ""} className="field" />
+              </div>
               <div>
                 <label className="field-label">Service</label>
                 <input name="service" defaultValue={g.service} className="field" />
@@ -42,6 +48,12 @@ export default async function AdminGallery() {
               <div className="sm:col-span-2">
                 <label className="field-label">Description</label>
                 <textarea name="description" defaultValue={g.description} className="field !min-h-20" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="field-label">
+                  Description in Spanish <span className="font-normal text-muted">(optional)</span>
+                </label>
+                <textarea name="descriptionEs" defaultValue={g.descriptionEs ?? ""} className="field !min-h-20" />
               </div>
               <label className="flex items-center gap-3 text-sm font-semibold text-ink">
                 <input type="checkbox" name="published" defaultChecked={g.published} className="size-5 accent-plum-700" />

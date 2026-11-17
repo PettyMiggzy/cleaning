@@ -9,39 +9,57 @@ export const CREWS: {
   rate: number;
   minimum: number;
   title: string;
+  titleEs: string;
   bestFor: string;
+  bestForEs: string;
 }[] = [
   {
     size: 2,
     rate: 100,
     minimum: 200,
     title: "2 Professional Cleaners",
+    titleEs: "2 profesionales de limpieza",
     bestFor: "Apartments, condos & routine home cleaning",
+    bestForEs: "Apartamentos, condominios y limpieza rutinaria del hogar",
   },
   {
     size: 3,
     rate: 150,
     minimum: 300,
     title: "3 Professional Cleaners",
+    titleEs: "3 profesionales de limpieza",
     bestFor: "Larger homes, deep cleans & move-outs",
+    bestForEs: "Casas más grandes, limpiezas profundas y mudanzas",
   },
   {
     size: 4,
     rate: 200,
     minimum: 400,
     title: "4 Professional Cleaners",
+    titleEs: "4 profesionales de limpieza",
     bestFor: "Big homes, offices & time-sensitive turnovers",
+    bestForEs: "Casas grandes, oficinas y cambios con poco tiempo",
   },
 ];
 
 export const DEEP_CLEAN_SURCHARGE = { min: 0.25, max: 0.3 } as const;
 
 export const ADDITIONAL_PRICING = [
-  { label: "Deep Cleaning", value: "25–30% additional" },
-  { label: "Move-In / Move-Out Cleaning", value: "Custom estimate" },
-  { label: "Commercial Cleaning", value: "Custom estimate" },
-  { label: "Weekly / Biweekly Cleaning", value: "Discounts available upon approval" },
-  { label: "Specialty Cleaning", value: "Custom estimate" },
+  { label: "Deep Cleaning", value: "25–30% additional", labelEs: "Limpieza profunda", valueEs: "25–30% adicional" },
+  {
+    label: "Move-In / Move-Out Cleaning",
+    value: "Custom estimate",
+    labelEs: "Limpieza de mudanza (entrada / salida)",
+    valueEs: "Estimado personalizado",
+  },
+  { label: "Commercial Cleaning", value: "Custom estimate", labelEs: "Limpieza comercial", valueEs: "Estimado personalizado" },
+  {
+    label: "Weekly / Biweekly Cleaning",
+    value: "Discounts available upon approval",
+    labelEs: "Limpieza semanal / quincenal",
+    valueEs: "Descuentos disponibles con aprobación",
+  },
+  { label: "Specialty Cleaning", value: "Custom estimate", labelEs: "Limpieza especializada", valueEs: "Estimado personalizado" },
 ];
 
 /** How a selected service is priced. */
@@ -99,12 +117,22 @@ export function formatUSD(n: number) {
   });
 }
 
-export function formatHours(h: number) {
-  return `${h % 1 === 0 ? h : h.toFixed(1)} hour${h === 1 ? "" : "s"}`;
+export function formatHours(h: number, lang: "en" | "es" = "en") {
+  const n = h % 1 === 0 ? h : h.toFixed(1);
+  return lang === "es" ? `${n} ${h === 1 ? "hora" : "horas"}` : `${n} hour${h === 1 ? "" : "s"}`;
 }
 
-export function describeEstimate(e: Estimate) {
+export function describeEstimate(e: Estimate, lang: "en" | "es" = "en") {
   const range = e.low === e.high ? formatUSD(e.low) : `${formatUSD(e.low)} – ${formatUSD(e.high)}`;
+  if (lang === "es") {
+    return `${e.crew} profesionales × ${formatHours(e.hours, "es")} a ${formatUSD(e.rate)}/hr = ${range}${
+      e.mode === "deep"
+        ? " (incluye 25–30% de limpieza profunda)"
+        : e.mode === "custom"
+          ? " (referencia por hora — estimado personalizado)"
+          : ""
+    }`;
+  }
   return `${e.crew} cleaners × ${formatHours(e.hours)} @ ${formatUSD(e.rate)}/hr = ${range}${
     e.mode === "deep" ? " (includes 25–30% deep cleaning)" : e.mode === "custom" ? " (hourly reference — custom estimate)" : ""
   }`;

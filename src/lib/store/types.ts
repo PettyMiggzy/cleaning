@@ -3,12 +3,17 @@ import type { CategoryId } from "../services-catalog";
 export type ServiceOverride = {
   enabled?: boolean;
   description?: string;
+  /** Optional Spanish description (falls back to the built-in Spanish text). */
+  descriptionEs?: string;
 };
 
 export type CustomService = {
   id: string;
   name: string;
   description: string;
+  /** Optional Spanish versions (fall back to English). */
+  nameEs?: string;
+  descriptionEs?: string;
   category: CategoryId;
   enabled: boolean;
 };
@@ -40,6 +45,9 @@ export type GalleryItem = {
   id: string;
   title: string;
   description: string;
+  /** Optional Spanish caption (falls back to English). */
+  titleEs?: string;
+  descriptionEs?: string;
   location: string;
   service: string;
   before?: string;

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import type { Review } from "@/lib/store/types";
+import { useI18n } from "@/i18n/client";
 import { Icon } from "./Icon";
 
 export function GoogleG({ className = "size-5" }: { className?: string }) {
@@ -28,7 +29,36 @@ const PREVIEW_REVIEWS: Review[] = [
   { id: "p5", name: "David P.", location: "Cypress, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "Office Cleaning", text: "They clean our small office after hours and do a fantastic job. Communication by text is quick and easy. Highly recommend for any business." },
   { id: "p6", name: "Sofia M.", location: "Kingwood, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "Apartment Cleaning", text: "Sent photos of my apartment and got a quick estimate. The crew was sweet, detail-oriented and left everything smelling fresh. A cleaner home, a happier me!" },
 ];
-const PREVIEW_WHEN = ["1 week ago", "2 weeks ago", "3 weeks ago", "a month ago", "a month ago", "2 months ago"];
+const PREVIEW_ES: Record<string, { text: string; service: string }> = {
+  p1: {
+    service: "Limpieza profunda",
+    text: "Emili y su equipo hicieron una limpieza profunda increíble antes de que llegaran mis suegros. Zoclos, ventiladores de techo, el vidrio de la ducha — todo brillaba. Reservar fue muy fácil: solo envié fotos por texto y ese mismo día tenía un precio.",
+  },
+  p2: {
+    service: "Limpieza de mudanza (salida)",
+    text: "Los contraté para una limpieza de salida en nuestra casa de renta. Quedó mejor que cuando nos mudamos. Muy profesionales, puntuales y el precio fue exactamente el que cotizaron.",
+  },
+  p3: {
+    service: "Limpieza quincenal",
+    text: "Llevamos tiempo usando a Emili's cada dos semanas y sinceramente no sé cómo vivíamos sin ellos. El equipo es amable, cuidadoso con nuestras cosas y muy bueno con nuestros perros.",
+  },
+  p4: {
+    service: "Limpieza de casas",
+    text: "Me encanta que la tarifa por hora cubra a todo el equipo — sin sorpresas. Tres profesionales terminaron nuestra casa de 4 recámaras en unas pocas horas. ¡La cocina y los baños quedaron impecables!",
+  },
+  p5: {
+    service: "Limpieza de oficinas",
+    text: "Limpian nuestra oficina pequeña después del horario de trabajo y hacen un trabajo fantástico. La comunicación por texto es rápida y fácil. Los recomiendo ampliamente para cualquier negocio.",
+  },
+  p6: {
+    service: "Limpieza de apartamentos",
+    text: "Envié fotos de mi apartamento y recibí un estimado rápido. El equipo fue amable, detallista y dejó todo con olor fresco. ¡Un hogar más limpio, una vida más feliz!",
+  },
+};
+const PREVIEW_WHEN: Record<"en" | "es", string[]> = {
+  en: ["1 week ago", "2 weeks ago", "3 weeks ago", "a month ago", "a month ago", "2 months ago"],
+  es: ["hace 1 semana", "hace 2 semanas", "hace 3 semanas", "hace un mes", "hace un mes", "hace 2 meses"],
+};
 
 function subscribe() {
   return () => {};
@@ -41,11 +71,11 @@ function usePreview() {
   );
 }
 
-function when(r: Review, i: number, preview: boolean) {
-  if (preview) return PREVIEW_WHEN[i % PREVIEW_WHEN.length];
+function when(r: Review, i: number, preview: boolean, lang: "en" | "es") {
+  if (preview) return PREVIEW_WHEN[lang][i % PREVIEW_WHEN[lang].length];
   const [y, m, d] = r.date.split("-").map(Number);
   if (!y || !m) return "";
-  return new Date(Date.UTC(y, m - 1, d || 1)).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+  return new Date(Date.UTC(y, m - 1, d || 1)).toLocaleDateString(lang === "es" ? "es-US" : "en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 }
 
 export function GoogleReviews({
@@ -59,11 +89,13 @@ export function GoogleReviews({
   limit?: number;
   showWriteLink?: boolean;
 }) {
+  const { lang, t, href } = useI18n();
   const preview = usePreview() && reviews.length === 0;
-  const list = (preview ? PREVIEW_REVIEWS : reviews).slice(0, limit ?? 99);
+  const samples = lang === "es" ? PREVIEW_REVIEWS.map((r) => ({ ...r, ...PREVIEW_ES[r.id] })) : PREVIEW_REVIEWS;
+  const list = (preview ? samples : reviews).slice(0, limit ?? 99);
   const count = list.length;
   const avg = preview ? 5 : reviews.reduce((n, r) => n + r.rating, 0) / Math.max(1, reviews.length);
-  const leaveHref = googleReviewUrl || "/reviews#write-a-review";
+  const leaveHref = googleReviewUrl || href("/reviews#write-a-review");
 
   return (
     <div>
@@ -74,7 +106,7 @@ export function GoogleReviews({
             <GoogleG className="size-8" />
           </span>
           <div>
-            <p className="font-sans text-sm font-bold tracking-wide text-ink">Google Reviews</p>
+            <p className="font-sans text-sm font-bold tracking-wide text-ink">{t("Google Reviews", "Reseñas de Google")}</p>
             {list.length > 0 ? (
               <p className="flex items-center gap-2">
                 <span className="font-serif text-2xl font-semibold text-ink">{avg.toFixed(1)}</span>
@@ -84,11 +116,11 @@ export function GoogleReviews({
                   ))}
                 </span>
                 <span className="text-sm text-muted">
-                  {count} review{count === 1 ? "" : "s"}
+                  {lang === "es" ? `${count} ${count === 1 ? "reseña" : "reseñas"}` : `${count} review${count === 1 ? "" : "s"}`}
                 </span>
               </p>
             ) : (
-              <p className="text-sm text-muted">Be one of the first to review us on Google</p>
+              <p className="text-sm text-muted">{t("Be one of the first to review us on Google", "Sea de los primeros en reseñarnos en Google")}</p>
             )}
           </div>
         </div>
@@ -97,7 +129,7 @@ export function GoogleReviews({
           {...(googleReviewUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           className="btn btn-primary btn-sm"
         >
-          <Icon name="star" className="size-4" /> Review us on Google
+          <Icon name="star" className="size-4" /> {t("Review us on Google", "Reseñenos en Google")}
         </a>
       </div>
 
@@ -119,12 +151,12 @@ export function GoogleReviews({
                 {(preview || r.source === "Google") && <GoogleG className="size-5 shrink-0" />}
               </div>
               <div className="mt-4 flex items-center gap-2">
-                <span className="flex text-[#FBBC04]" aria-label={`${r.rating} out of 5 stars`} role="img">
+                <span className="flex text-[#FBBC04]" aria-label={t(`${r.rating} out of 5 stars`, `${r.rating} de 5 estrellas`)} role="img">
                   {[1, 2, 3, 4, 5].map((n) => (
                     <Icon key={n} name="star" className="size-4" fill={n <= r.rating ? "currentColor" : "none"} strokeWidth={1.2} />
                   ))}
                 </span>
-                <span className="text-xs text-muted">{when(r, i, preview)}</span>
+                <span className="text-xs text-muted">{when(r, i, preview, lang)}</span>
               </div>
               <blockquote className="mt-3 flex-1 text-[0.98rem] leading-relaxed text-ink-soft">{r.text}</blockquote>
             </figure>
@@ -133,14 +165,16 @@ export function GoogleReviews({
       ) : (
         <div className="silver-ring card mx-auto mt-10 max-w-2xl bg-white p-8 text-center shadow-soft sm:p-10" style={{ borderRadius: "2rem" }}>
           <Icon name="quote" className="mx-auto size-10 text-plum-300" />
-          <p className="mt-4 font-serif text-2xl text-ink">Our Google reviews will appear here.</p>
+          <p className="mt-4 font-serif text-2xl text-ink">{t("Our Google reviews will appear here.", "Nuestras reseñas de Google aparecerán aquí.")}</p>
           <p className="mt-3 text-ink-soft">
-            Had a great experience with Emili&apos;s Cleaning Co.? We&apos;d love to hear about it — your feedback helps your
-            neighbors find a cleaner they can trust.
+            {t(
+              "Had a great experience with Emili's Cleaning Co.? We'd love to hear about it — your feedback helps your neighbors find a cleaner they can trust.",
+              "¿Tuvo una gran experiencia con Emili's Cleaning Co.? Nos encantaría saberlo — su opinión ayuda a sus vecinos a encontrar un servicio de limpieza de confianza.",
+            )}
           </p>
           {showWriteLink && (
-            <Link href="/reviews#write-a-review" className="btn btn-outline mt-7">
-              <Icon name="edit" className="size-4" /> Write a review on our website
+            <Link href={href("/reviews#write-a-review")} className="btn btn-outline mt-7">
+              <Icon name="edit" className="size-4" /> {t("Write a review on our website", "Escribir una reseña en nuestro sitio")}
             </Link>
           )}
         </div>

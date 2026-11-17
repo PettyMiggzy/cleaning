@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { PHONE_LINES, SITE } from "@/lib/site";
+import { getI18n } from "@/i18n/server";
+import { PHONE_LINES } from "@/lib/site";
 import { Icon, Sparkle } from "./Icon";
 
 export function Eyebrow({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -37,35 +38,9 @@ export function SectionHeading({
   );
 }
 
-export function CallTextButtons({
-  line = "primary",
-  variant = "primary",
-  size = "",
-  className = "",
-}: {
-  line?: "primary" | "secondary";
-  variant?: "primary" | "outline" | "light" | "ghost-light";
-  size?: "" | "btn-sm" | "btn-lg";
-  className?: string;
-}) {
-  const p = SITE.phones[line];
-  const second = variant === "primary" ? "btn-outline" : variant === "light" ? "btn-ghost-light" : `btn-${variant}`;
-  return (
-    <div className={`flex flex-wrap gap-3 ${className}`}>
-      <a href={p.tel} className={`btn btn-${variant} ${size}`} aria-label={`Call ${p.display}`}>
-        <Icon name="phone" className="size-5" />
-        Call {p.display}
-      </a>
-      <a href={p.sms} className={`btn ${second} ${size}`} aria-label={`Text ${p.display}`}>
-        <Icon name="message" className="size-5" />
-        Text Us
-      </a>
-    </div>
-  );
-}
-
 /** Both business lines with clearly labeled call + text buttons. */
-export function PhoneLines({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
+export async function PhoneLines({ dark = false, compact = false }: { dark?: boolean; compact?: boolean }) {
+  const { t } = await getI18n();
   return (
     <div className={`grid gap-4 ${compact ? "" : "sm:grid-cols-2"}`}>
       {PHONE_LINES.map((p, i) => (
@@ -76,7 +51,9 @@ export function PhoneLines({ dark = false, compact = false }: { dark?: boolean; 
           }`}
         >
           <p className={`text-xs font-bold tracking-[0.18em] uppercase ${dark ? "text-plum-200" : "text-plum-700"}`}>
-            {i === 0 ? "Primary · Call or Text" : "Secondary · Call or Text"}
+            {i === 0
+              ? t("Primary · Call or Text", "Principal · Llame o envíe texto")
+              : t("Secondary · Call or Text", "Secundario · Llame o envíe texto")}
           </p>
           <a
             href={p.tel}
@@ -88,10 +65,10 @@ export function PhoneLines({ dark = false, compact = false }: { dark?: boolean; 
           </a>
           <div className="mt-4 grid grid-cols-2 gap-2">
             <a href={p.tel} className={`btn btn-sm ${dark ? "btn-light" : "btn-primary"}`}>
-              <Icon name="phone" className="size-4" /> Call
+              <Icon name="phone" className="size-4" /> {t("Call", "Llamar")}
             </a>
             <a href={p.sms} className={`btn btn-sm ${dark ? "btn-ghost-light" : "btn-outline"}`}>
-              <Icon name="message" className="size-4" /> Text
+              <Icon name="message" className="size-4" /> {t("Text", "Texto")}
             </a>
           </div>
         </div>
@@ -100,16 +77,17 @@ export function PhoneLines({ dark = false, compact = false }: { dark?: boolean; 
   );
 }
 
-export function PrimaryCtas({ className = "", light = false }: { className?: string; light?: boolean }) {
+export async function PrimaryCtas({ className = "", light = false }: { className?: string; light?: boolean }) {
+  const { t, href } = await getI18n();
   return (
     <div className={`flex flex-wrap gap-3 ${className}`}>
-      <Link href="/book" className={`btn btn-lg ${light ? "btn-light" : "btn-primary"}`}>
+      <Link href={href("/book")} className={`btn btn-lg ${light ? "btn-light" : "btn-primary"}`}>
         <Icon name="calendar" className="size-5" />
-        Book Your Cleaning
+        {t("Book Your Cleaning", "Reserve su limpieza")}
       </Link>
-      <Link href="/photo-estimate" className={`btn btn-lg ${light ? "btn-ghost-light" : "btn-outline"}`}>
+      <Link href={href("/photo-estimate")} className={`btn btn-lg ${light ? "btn-ghost-light" : "btn-outline"}`}>
         <Icon name="camera" className="size-5" />
-        Send Pictures for a Free Estimate
+        {t("Send Pictures for a Free Estimate", "Envíe fotos para un estimado gratis")}
       </Link>
     </div>
   );
@@ -130,9 +108,18 @@ export function CheckList({ items, className = "" }: { items: string[]; classNam
   );
 }
 
-export function Stars({ rating, className = "size-4" }: { rating: number; className?: string }) {
+export function Stars({
+  rating,
+  className = "size-4",
+  label,
+}: {
+  rating: number;
+  className?: string;
+  /** Accessible label; defaults to English. */
+  label?: string;
+}) {
   return (
-    <span className="inline-flex gap-0.5 text-plum-500" aria-label={`${rating} out of 5 stars`} role="img">
+    <span className="inline-flex gap-0.5 text-plum-500" aria-label={label ?? `${rating} out of 5 stars`} role="img">
       {[1, 2, 3, 4, 5].map((i) => (
         <Icon key={i} name="star" className={className} fill={i <= rating ? "currentColor" : "none"} strokeWidth={1.5} />
       ))}

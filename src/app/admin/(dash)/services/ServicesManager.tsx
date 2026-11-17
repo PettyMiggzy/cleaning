@@ -10,7 +10,9 @@ type Svc = {
   id: string;
   name: string;
   description: string;
+  descriptionEs?: string;
   defaultDescription: string;
+  defaultDescriptionEs: string;
   categories: CategoryId[];
   enabled: boolean;
   custom: boolean;
@@ -116,7 +118,12 @@ function ServiceRow({ s, enabled, onToggle }: { s: Svc; enabled: boolean; onTogg
           </p>
           {!editing ? (
             <p className="mt-0.5 text-sm text-muted">
-              {s.description}{" "}
+              {s.description}
+              {s.descriptionEs && s.descriptionEs !== s.description && (
+                <span className="mt-1 block text-xs text-muted/90">
+                  <strong className="font-semibold">ES:</strong> {s.descriptionEs}
+                </span>
+              )}{" "}
               <button type="button" onClick={() => setEditing(true)} className="font-semibold text-plum-700 hover:underline">
                 Edit
               </button>
@@ -133,7 +140,10 @@ function ServiceRow({ s, enabled, onToggle }: { s: Svc; enabled: boolean; onTogg
               className="mt-2 space-y-2"
             >
               <input type="hidden" name="id" value={s.id} />
+              <label className="block text-xs font-bold text-muted uppercase">English description</label>
               <textarea name="description" defaultValue={s.description} maxLength={600} className="field !min-h-20 text-sm" />
+              <label className="block text-xs font-bold text-muted uppercase">Spanish description (Español)</label>
+              <textarea name="descriptionEs" defaultValue={s.descriptionEs ?? ""} maxLength={600} className="field !min-h-20 text-sm" />
               <div className="flex flex-wrap gap-2">
                 <button className="btn btn-primary btn-sm" type="submit" disabled={pending}>
                   Save
@@ -141,7 +151,7 @@ function ServiceRow({ s, enabled, onToggle }: { s: Svc; enabled: boolean; onTogg
                 <button className="btn btn-outline btn-sm" type="button" onClick={() => setEditing(false)}>
                   Cancel
                 </button>
-                {!s.custom && s.description !== s.defaultDescription && (
+                {!s.custom && (s.description !== s.defaultDescription || (s.descriptionEs ?? "") !== s.defaultDescriptionEs) && (
                   <button
                     className="btn btn-outline btn-sm"
                     type="button"
@@ -150,6 +160,7 @@ function ServiceRow({ s, enabled, onToggle }: { s: Svc; enabled: boolean; onTogg
                         const fd = new FormData();
                         fd.set("id", s.id);
                         fd.set("description", s.defaultDescription);
+                        fd.set("descriptionEs", s.defaultDescriptionEs);
                         await saveServiceDescription(fd);
                         setEditing(false);
                         router.refresh();

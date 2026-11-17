@@ -49,6 +49,23 @@ export const SITE = {
   },
 } as const;
 
+/** Brand copy per language (slogan, tagline, description). */
+export const COPY = {
+  en: {
+    slogan: SITE.slogan,
+    headline: SITE.headline,
+    description: SITE.description,
+    goal: SITE.goal,
+  },
+  es: {
+    slogan: "¡Un hogar más limpio, una vida más feliz!",
+    headline: "Limpieza profesional de casas y servicio de limpieza doméstica en Spring, TX",
+    description:
+      "Emili's Cleaning Co. ofrece servicios profesionales de limpieza residencial, de apartamentos, comercial, limpieza profunda y limpieza de mudanza en Spring y las comunidades cercanas.",
+    goal: "Nuestro objetivo es ofrecer un servicio de limpieza confiable, con precios transparentes, horarios flexibles y estimados fáciles.",
+  },
+} as const;
+
 export type PhoneLine = (typeof SITE.phones)[keyof typeof SITE.phones];
 
 export const PHONE_LINES: PhoneLine[] = [SITE.phones.primary, SITE.phones.secondary];

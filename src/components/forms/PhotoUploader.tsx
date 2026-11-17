@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { compressImage } from "@/lib/image-compress";
+import { useI18n } from "@/i18n/client";
 import { Icon } from "../Icon";
 
 export const MAX_PHOTOS = 10;
@@ -13,8 +14,8 @@ export function PhotoUploader({
   onChange,
   required = false,
   error,
-  label = "Upload pictures",
-  hint = "Add up to 10 photos of the rooms or areas you need cleaned.",
+  label,
+  hint,
 }: {
   photos: PickedPhoto[];
   onChange: (next: PickedPhoto[]) => void;
@@ -23,6 +24,7 @@ export function PhotoUploader({
   label?: string;
   hint?: string;
 }) {
+  const { t } = useI18n();
   const id = useId();
   const galleryRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
@@ -40,7 +42,13 @@ export function PhotoUploader({
     if (!list) return;
     const incoming = Array.from(list).filter((f) => f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name));
     const room = MAX_PHOTOS - latest.current.length;
-    if (incoming.length > room) setNote(`Only ${MAX_PHOTOS} photos can be uploaded — you can text more to us anytime.`);
+    if (incoming.length > room)
+      setNote(
+        t(
+          `Only ${MAX_PHOTOS} photos can be uploaded — you can text more to us anytime.`,
+          `Solo se pueden subir ${MAX_PHOTOS} fotos — puede enviarnos más por texto cuando quiera.`,
+        ),
+      );
     else setNote("");
     const take = incoming.slice(0, Math.max(0, room));
     if (!take.length) return;
@@ -64,7 +72,8 @@ export function PhotoUploader({
   return (
     <div>
       <p className="field-label" id={`${id}-label`}>
-        {label} {required ? <span className="text-plum-600">*</span> : <span className="font-normal text-muted">(optional)</span>}
+        {label ?? t("Upload pictures", "Subir fotos")}{" "}
+        {required ? <span className="text-plum-600">*</span> : <span className="font-normal text-muted">{t("(optional)", "(opcional)")}</span>}
       </p>
       <div
         onDragOver={(e) => {
@@ -86,16 +95,18 @@ export function PhotoUploader({
           <Icon name="imagePlus" className="size-7" />
         </span>
         <p className="mt-3 font-semibold text-ink">
-          <span className="sm:hidden">Take photos or choose from your gallery</span>
-          <span className="hidden sm:inline">Drag &amp; drop photos here, or choose files</span>
+          <span className="sm:hidden">{t("Take photos or choose from your gallery", "Tome fotos o elíjalas de su galería")}</span>
+          <span className="hidden sm:inline">{t("Drag & drop photos here, or choose files", "Arrastre y suelte fotos aquí, o elija archivos")}</span>
         </p>
-        <p className="mx-auto mt-1 max-w-md text-sm text-muted">{hint}</p>
+        <p className="mx-auto mt-1 max-w-md text-sm text-muted">
+          {hint ?? t("Add up to 10 photos of the rooms or areas you need cleaned.", "Agregue hasta 10 fotos de los cuartos o áreas que necesita limpiar.")}
+        </p>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <button type="button" className="btn btn-primary btn-sm" onClick={() => galleryRef.current?.click()}>
-            <Icon name="image" className="size-4" /> Choose Photos
+            <Icon name="image" className="size-4" /> {t("Choose Photos", "Elegir fotos")}
           </button>
           <button type="button" className="btn btn-outline btn-sm sm:hidden" onClick={() => cameraRef.current?.click()}>
-            <Icon name="camera" className="size-4" /> Take a Photo
+            <Icon name="camera" className="size-4" /> {t("Take a Photo", "Tomar una foto")}
           </button>
         </div>
         <input
@@ -129,12 +140,12 @@ export function PhotoUploader({
           {photos.map((p, i) => (
             <li key={p.id} className="group relative aspect-square overflow-hidden rounded-2xl bg-silver-100 shadow-soft">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.url} alt={`Selected photo ${i + 1}`} className="size-full object-cover" />
+              <img src={p.url} alt={`${t("Selected photo", "Foto seleccionada")} ${i + 1}`} className="size-full object-cover" />
               <button
                 type="button"
                 onClick={() => remove(p.id)}
                 className="absolute top-1.5 right-1.5 grid size-8 place-items-center rounded-full bg-white/95 text-ink shadow"
-                aria-label={`Remove photo ${i + 1}`}
+                aria-label={`${t("Remove photo", "Quitar foto")} ${i + 1}`}
               >
                 <Icon name="x" className="size-4" />
               </button>
@@ -147,14 +158,14 @@ export function PhotoUploader({
             >
               <span className="flex flex-col items-center gap-2">
                 <span className="size-6 animate-spin rounded-full border-2 border-plum-200 border-t-plum-600" />
-                Optimizing…
+                {t("Optimizing…", "Optimizando…")}
               </span>
             </li>
           ))}
         </ul>
       )}
       <p className="mt-2 text-sm text-muted" aria-live="polite">
-        {photos.length}/{MAX_PHOTOS} photos added{note ? ` · ${note}` : ""}
+        {photos.length}/{MAX_PHOTOS} {t("photos added", "fotos agregadas")}{note ? ` · ${note}` : ""}
       </p>
       {error && (
         <p className="mt-1 text-sm font-semibold text-[#b0324d]" role="alert">

@@ -43,6 +43,8 @@ export async function POST(req: Request) {
     id,
     title,
     description: String(fd.get("description") ?? "").trim().slice(0, 600),
+    titleEs: String(fd.get("titleEs") ?? "").trim().slice(0, 120) || undefined,
+    descriptionEs: String(fd.get("descriptionEs") ?? "").trim().slice(0, 600) || undefined,
     location: String(fd.get("location") ?? "").trim().slice(0, 80),
     service: String(fd.get("service") ?? "").trim().slice(0, 120),
     before: urls.before,

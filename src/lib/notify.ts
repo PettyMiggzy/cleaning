@@ -95,7 +95,7 @@ export function escapeHtml(s: string) {
 }
 
 /** Branded, email-client-safe HTML wrapper. */
-export function emailLayout(title: string, intro: string, rows: [string, string][], footer = "") {
+export function emailLayout(title: string, intro: string, rows: [string, string][], footer = "", lang: "en" | "es" = "en") {
   const tr = rows
     .filter(([, v]) => v)
     .map(
@@ -111,13 +111,15 @@ export function emailLayout(title: string, intro: string, rows: [string, string]
 <table role="presentation" width="100%" style="max-width:640px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e6e1ee">
 <tr><td style="background:linear-gradient(135deg,#6a2fa6,#9a5cd3);padding:22px 24px;color:#fff;font:700 20px Georgia,serif">${escapeHtml(
     SITE.name,
-  )}<div style="font:400 13px Arial,sans-serif;opacity:.9;margin-top:4px">${escapeHtml(SITE.slogan)}</div></td></tr>
+  )}<div style="font:400 13px Arial,sans-serif;opacity:.9;margin-top:4px">${escapeHtml(
+    lang === "es" ? "¡Un hogar más limpio, una vida más feliz!" : SITE.slogan,
+  )}</div></td></tr>
 <tr><td style="padding:22px 24px 8px;font:700 18px Arial,sans-serif;color:#16131a">${escapeHtml(title)}</td></tr>
 <tr><td style="padding:0 24px 16px;font:15px/1.5 Arial,sans-serif;color:#4a4552">${intro}</td></tr>
 <tr><td style="padding:0 10px 10px"><table role="presentation" width="100%" style="border-collapse:collapse">${tr}</table></td></tr>
 ${footer ? `<tr><td style="padding:16px 24px 24px;font:14px/1.5 Arial,sans-serif;color:#4a4552">${footer}</td></tr>` : ""}
-<tr><td style="padding:16px 24px;background:#faf8fc;font:12px Arial,sans-serif;color:#8a8494">${escapeHtml(SITE.name)} · Call or text ${
-    SITE.phones.primary.display
-  } · Secondary ${SITE.phones.secondary.display}</td></tr>
+<tr><td style="padding:16px 24px;background:#faf8fc;font:12px Arial,sans-serif;color:#8a8494">${escapeHtml(SITE.name)} · ${
+    lang === "es" ? "Llame o envíe un texto al" : "Call or text"
+  } ${SITE.phones.primary.display} · ${lang === "es" ? "Secundario" : "Secondary"} ${SITE.phones.secondary.display}</td></tr>
 </table></body></html>`;
 }

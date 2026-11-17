@@ -91,9 +91,21 @@ export function GalleryUpload() {
         <label className="field-label">Location</label>
         <input name="location" list="area-list" className="field" placeholder="e.g. Spring, TX" />
       </div>
+      <div>
+        <label className="field-label">
+          Title in Spanish <span className="font-normal text-muted">(optional)</span>
+        </label>
+        <input name="titleEs" className="field" placeholder="ej. Limpieza profunda de cocina" />
+      </div>
       <div className="sm:col-span-2">
         <label className="field-label">Description</label>
         <textarea name="description" className="field !min-h-20" />
+      </div>
+      <div className="sm:col-span-2">
+        <label className="field-label">
+          Description in Spanish <span className="font-normal text-muted">(optional)</span>
+        </label>
+        <textarea name="descriptionEs" className="field !min-h-20" />
       </div>
       <label className="flex items-center gap-3 text-sm font-semibold text-ink">
         <input type="checkbox" name="published" defaultChecked className="size-5 accent-plum-700" /> Show on website

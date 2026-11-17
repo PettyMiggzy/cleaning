@@ -96,13 +96,19 @@ export async function saveServiceDescription(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const description = String(formData.get("description") ?? "").trim().slice(0, 600);
+  const descriptionEs = String(formData.get("descriptionEs") ?? "").trim().slice(0, 600);
   const s = await readServices();
   const custom = s.custom.find((c) => c.id === id);
   if (custom) {
     if (description) custom.description = description;
+    custom.descriptionEs = descriptionEs || undefined;
   } else if (CATALOG.some((c) => c.id === id)) {
     const base = CATALOG.find((c) => c.id === id)!;
-    s.overrides[id] = { ...s.overrides[id], description: description && description !== base.description ? description : undefined };
+    s.overrides[id] = {
+      ...s.overrides[id],
+      description: description && description !== base.description ? description : undefined,
+      descriptionEs: descriptionEs && descriptionEs !== base.descriptionEs ? descriptionEs : undefined,
+    };
   }
   await writeServices(s);
 }
@@ -111,12 +117,22 @@ export async function addCustomService(formData: FormData) {
   await requireAdmin();
   const name = String(formData.get("name") ?? "").trim().slice(0, 100);
   const description = String(formData.get("description") ?? "").trim().slice(0, 600);
+  const nameEs = String(formData.get("nameEs") ?? "").trim().slice(0, 100);
+  const descriptionEs = String(formData.get("descriptionEs") ?? "").trim().slice(0, 600);
   const category = String(formData.get("category") ?? "") as CategoryId;
   if (name.length < 3 || !CATEGORIES.some((c) => c.id === category)) return;
   const s = await readServices();
   let id = `custom-${slugify(name)}`;
   if (s.custom.some((c) => c.id === id)) id = `${id}-${newId().slice(-4)}`;
-  s.custom.push({ id, name, description: description || `${name} — contact us for details.`, category, enabled: true });
+  s.custom.push({
+    id,
+    name,
+    description: description || `${name} — contact us for details.`,
+    nameEs: nameEs || undefined,
+    descriptionEs: descriptionEs || undefined,
+    category,
+    enabled: true,
+  });
   await writeServices(s);
 }
 
@@ -190,6 +206,8 @@ export async function updateGalleryItem(formData: FormData) {
   if (!g) return;
   g.title = String(formData.get("title") ?? g.title).trim().slice(0, 120) || g.title;
   g.description = String(formData.get("description") ?? "").trim().slice(0, 600);
+  g.titleEs = String(formData.get("titleEs") ?? "").trim().slice(0, 120) || undefined;
+  g.descriptionEs = String(formData.get("descriptionEs") ?? "").trim().slice(0, 600) || undefined;
   g.location = String(formData.get("location") ?? "").trim().slice(0, 80);
   g.service = String(formData.get("service") ?? "").trim().slice(0, 120);
   g.published = formData.get("published") === "on";
