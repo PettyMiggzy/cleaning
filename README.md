@@ -1,6 +1,6 @@
 # Emili's Cleaning Co. — Website
 
-**A Cleaner Home, A Happier You!**
+**A Cleaner Home, A Blessed You!**
 
 Premium, mobile-first website for Emili's Cleaning Co. (Spring, TX), built with Next.js 16, React 19 and Tailwind CSS 4.
 

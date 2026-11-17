@@ -1,6 +1,6 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
-import { SITE } from "./site";
+import { COPY, SITE } from "./site";
 
 export type MailAttachment = { filename: string; content: Buffer; contentType: string };
 
@@ -112,7 +112,7 @@ export function emailLayout(title: string, intro: string, rows: [string, string]
 <tr><td style="background:linear-gradient(135deg,#6a2fa6,#9a5cd3);padding:22px 24px;color:#fff;font:700 20px Georgia,serif">${escapeHtml(
     SITE.name,
   )}<div style="font:400 13px Arial,sans-serif;opacity:.9;margin-top:4px">${escapeHtml(
-    lang === "es" ? "¡Un hogar más limpio, una vida más feliz!" : SITE.slogan,
+    COPY[lang].slogan,
   )}</div></td></tr>
 <tr><td style="padding:22px 24px 8px;font:700 18px Arial,sans-serif;color:#16131a">${escapeHtml(title)}</td></tr>
 <tr><td style="padding:0 24px 16px;font:15px/1.5 Arial,sans-serif;color:#4a4552">${intro}</td></tr>

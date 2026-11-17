@@ -15,7 +15,7 @@ export const SITE = {
   name: "Emili's Cleaning Co.",
   legalName: "Emili's Cleaning Co.",
   shortName: "Emili's Cleaning",
-  slogan: "A Cleaner Home, A Happier You!",
+  slogan: "A Cleaner Home, A Blessed You!",
   headline: "Professional House Cleaning & Maid Services in Spring, TX",
   description:
     "Emili's Cleaning Co. provides professional residential, apartment, commercial, deep cleaning, and move-out cleaning services throughout Spring and surrounding communities.",
@@ -58,7 +58,7 @@ export const COPY = {
     goal: SITE.goal,
   },
   es: {
-    slogan: "¡Un hogar más limpio, una vida más feliz!",
+    slogan: "¡Un hogar más limpio, una vida bendecida!",
     headline: "Limpieza profesional de casas y servicio de limpieza doméstica en Spring, TX",
     description:
       "Emili's Cleaning Co. ofrece servicios profesionales de limpieza residencial, de apartamentos, comercial, limpieza profunda y limpieza de mudanza en Spring y las comunidades cercanas.",

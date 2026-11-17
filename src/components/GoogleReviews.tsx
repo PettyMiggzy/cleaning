@@ -27,7 +27,7 @@ const PREVIEW_REVIEWS: Review[] = [
   { id: "p3", name: "Ana L.", location: "Klein, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "Biweekly Cleaning", text: "We've been using Emili's every other week and I honestly don't know how we lived without them. The team is friendly, careful with our things and great with our dogs." },
   { id: "p4", name: "Brittany W.", location: "Tomball, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "House Cleaning", text: "Love that the hourly price covers the whole crew — no surprises. Three cleaners had our 4-bedroom done in a few hours. Kitchen and bathrooms were spotless!" },
   { id: "p5", name: "David P.", location: "Cypress, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "Office Cleaning", text: "They clean our small office after hours and do a fantastic job. Communication by text is quick and easy. Highly recommend for any business." },
-  { id: "p6", name: "Sofia M.", location: "Kingwood, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "Apartment Cleaning", text: "Sent photos of my apartment and got a quick estimate. The crew was sweet, detail-oriented and left everything smelling fresh. A cleaner home, a happier me!" },
+  { id: "p6", name: "Sofia M.", location: "Kingwood, TX", rating: 5, source: "Google", date: "", published: true, createdAt: "", service: "Apartment Cleaning", text: "Sent photos of my apartment and got a quick estimate. The crew was sweet, detail-oriented and left everything smelling fresh. A cleaner home, a blessed me!" },
 ];
 const PREVIEW_ES: Record<string, { text: string; service: string }> = {
   p1: {
@@ -52,7 +52,7 @@ const PREVIEW_ES: Record<string, { text: string; service: string }> = {
   },
   p6: {
     service: "Limpieza de apartamentos",
-    text: "Envié fotos de mi apartamento y recibí un estimado rápido. El equipo fue amable, detallista y dejó todo con olor fresco. ¡Un hogar más limpio, una vida más feliz!",
+    text: "Envié fotos de mi apartamento y recibí un estimado rápido. El equipo fue amable, detallista y dejó todo con olor fresco. ¡Un hogar más limpio, una vida bendecida!",
   },
 };
 const PREVIEW_WHEN: Record<"en" | "es", string[]> = {

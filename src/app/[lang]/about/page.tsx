@@ -66,10 +66,10 @@ export default async function AboutPage() {
         eyebrow={t("Our Story", "Nuestra historia")}
         title={t(
           <>
-            A cleaner home, <span className="text-gradient italic">a happier you</span>
+            A cleaner home, <span className="text-gradient italic">a blessed you</span>
           </>,
           <>
-            Un hogar más limpio, <span className="text-gradient italic">una vida más feliz</span>
+            Un hogar más limpio, <span className="text-gradient italic">una vida bendecida</span>
           </>,
         )}
         lead={t(
